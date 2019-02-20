@@ -19,7 +19,7 @@ Dentro do diretório do projeto, vamos criar dois novos diretórios:
 - *``` src/```* (o código criado ficará aqui);
 - *```dist/```* (o código gerado pelo Babel ficará aqui).
   
-No arquivo package.json, vamos configurar os scripts dessa forma:
+No arquivo *```package.json```*, vamos configurar os scripts dessa forma:
 
 ```javaScript
 "scripts": {
