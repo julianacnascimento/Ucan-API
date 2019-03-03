@@ -8,9 +8,16 @@ let sequelize = new Sequelize('ucan_db', null, null,{
 
 export let Alunos = sequelize.define('alunos',{
     nome: Sequelize.STRING,
-    matricula: {type: Sequelize.INTEGER, allownull: false, unique: 'compositeindex'},
+    matricula: Sequelize.INTEGER,
     personalidade: Sequelize.INTEGER
 
 });
-
 Alunos.sync();
+
+export let Profissoes = sequelize.define('profissoes',{
+    nome: Sequelize.STRING,
+    descrição: Sequelize.TEXT,
+
+})
+
+Profissoes.sync();

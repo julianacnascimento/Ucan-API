@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Alunos = undefined;
+exports.Profissoes = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -19,9 +19,16 @@ var sequelize = new _sequelize2.default('ucan_db', null, null, {
 
 var Alunos = exports.Alunos = sequelize.define('alunos', {
     nome: _sequelize2.default.STRING,
-    matricula: { type: _sequelize2.default.INTEGER, allownull: false, unique: 'compositeindex' },
+    matricula: _sequelize2.default.INTEGER,
     personalidade: _sequelize2.default.INTEGER
 
 });
-
 Alunos.sync();
+
+var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
+    nome: _sequelize2.default.STRING,
+    descrição: _sequelize2.default.TEXT
+
+});
+
+Profissoes.sync();

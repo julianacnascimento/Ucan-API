@@ -60,4 +60,49 @@ router.route('/alunos/:aluno_id').get(function (req, res) {
     });
 });
 
+router.route('/profissoes').get(function (req, res) {
+    _models.Profissoes.findAll().then(function (profissao) {
+        res.json(profissao);
+    });
+}).post(function (req, res) {
+    var nome = req.body.nome;
+    var descrição = req.body.descrição;
+    var data = { nome: nome, descrição: descrição };
+
+    _models.Profissoes.create(data).then(function (profissao) {
+        res.json({ message: 'Profissão adicionada' });
+    });
+});
+
+router.route('/profissoes/:profissoes_id').get(function (req, res) {
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
+        if (profissao) {
+            res.json(profissao);
+        } else {
+            res.json({ erro: 'profissao não encontrado' });
+        }
+    });
+}).put(function (req, res) {
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
+        if (profissao) {
+            profissao.update({
+                nome: req.body.nome,
+                descrição: req.body.descrição
+            });
+            res.json({ message: 'dados atualizados com sucesso' });
+        } else {
+            res.json({ erro: 'profissao não encontrada' });
+        }
+    });
+}).delete(function (req, res) {
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
+        if (profissao) {
+            profissao.destroy();
+            res.json({ mensagem: 'profissão deletada com sucesso' });
+        } else {
+            res.json({ erro: 'profissão não encontrada' });
+        }
+    });
+});
+
 exports.default = router;
