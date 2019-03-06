@@ -5,10 +5,10 @@
     <ul>
       <li>
         <a
-          href="https://vuejs.org"
+          href="/login"
           target="_blank"
         >
-          Core Docs
+          Login
         </a>
       </li>
       <li>
