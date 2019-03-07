@@ -1,6 +1,13 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <img src="./assets/logo-ucan.jpg">
+
+    <app-menu>
+      <template slot="nome-site">Ucan</template>
+      <span slot="links">
+        <a href="#">Login</a>
+      </span>
+    </app-menu>
     <router-view/>
   </div>
 </template>
