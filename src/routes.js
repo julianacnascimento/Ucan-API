@@ -1,10 +1,11 @@
 import express from 'express';
 import { Alunos, Profissoes } from './models';
+import { Usuario } from '../dist/models';
 
 
 let router = express.Router(); 
 
-router.route('/alunos')
+router.route('/aluno')
     .get((req,res)=>{
         Alunos.findAll().then(function(alunos){
             res.json(alunos);
@@ -22,8 +23,26 @@ router.route('/alunos')
        });
     });
 
+    router.route('/usuario')
+    .get((req,res)=>{
+        Usuario.findAll().then(function(usuario){
+            res.json(usuario);
+        })
+    })
 
-router.route('/alunos/:aluno_id')
+    .post((req,res)=>{
+       const id = req.body.id;
+       const usuario = req.body.usuario;
+       const senha = req.body.senha;
+       const data = {id: id, usuario: usuario, senha: senha};
+
+       Usuario.create(data).then((usuario)=>{
+           res.json({message: 'Usuario adicionado'})
+       });
+    });
+
+
+router.route('/aluno/:aluno_id')
     .get((req,res)=>{
         Alunos.findById(req.params.aluno_id).then((aluno)=>{
             if(aluno){
@@ -62,7 +81,7 @@ router.route('/alunos/:aluno_id')
 
 
 
-router.route('/profissoes')
+router.route('/profissao')
     .get((req,res)=>{
         Profissoes.findAll().then(function(profissao){
             res.json(profissao)

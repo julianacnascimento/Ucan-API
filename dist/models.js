@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Profissoes = exports.Alunos = undefined;
+exports.Usuario = exports.Profissoes = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -23,7 +23,6 @@ var Alunos = exports.Alunos = sequelize.define('alunos', {
     personalidade: _sequelize2.default.INTEGER
 
 });
-Alunos.sync();
 
 var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
     nome: _sequelize2.default.STRING,
@@ -31,4 +30,14 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 
 });
 
+var Usuario = exports.Usuario = sequelize.define('usuario', {
+    usuario: _sequelize2.default.STRING,
+    senha: _sequelize2.default.STRING,
+    email: _sequelize2.default.STRING
+});
+
+Alunos.hasOne(Usuario);
+
+Alunos.sync();
 Profissoes.sync();
+Usuario.sync();

@@ -10,11 +10,13 @@ var _express2 = _interopRequireDefault(_express);
 
 var _models = require('./models');
 
+var _models2 = require('../dist/models');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
 
-router.route('/alunos').get(function (req, res) {
+router.route('/aluno').get(function (req, res) {
     _models.Alunos.findAll().then(function (alunos) {
         res.json(alunos);
     });
@@ -29,7 +31,22 @@ router.route('/alunos').get(function (req, res) {
     });
 });
 
-router.route('/alunos/:aluno_id').get(function (req, res) {
+router.route('/usuario').get(function (req, res) {
+    _models2.Usuario.findAll().then(function (usuario) {
+        res.json(usuario);
+    });
+}).post(function (req, res) {
+    var id = req.body.id;
+    var usuario = req.body.usuario;
+    var senha = req.body.senha;
+    var data = { id: id, usuario: usuario, senha: senha };
+
+    _models2.Usuario.create(data).then(function (usuario) {
+        res.json({ message: 'Usuario adicionado' });
+    });
+});
+
+router.route('/aluno/:aluno_id').get(function (req, res) {
     _models.Alunos.findById(req.params.aluno_id).then(function (aluno) {
         if (aluno) {
             res.json(aluno);
@@ -60,7 +77,7 @@ router.route('/alunos/:aluno_id').get(function (req, res) {
     });
 });
 
-router.route('/profissoes').get(function (req, res) {
+router.route('/profissao').get(function (req, res) {
     _models.Profissoes.findAll().then(function (profissao) {
         res.json(profissao);
     });

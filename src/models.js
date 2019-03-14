@@ -12,12 +12,23 @@ export let Alunos = sequelize.define('alunos',{
     personalidade: Sequelize.INTEGER
 
 });
-Alunos.sync();
+
 
 export let Profissoes = sequelize.define('profissoes',{
     nome: Sequelize.STRING,
     descrição: Sequelize.TEXT,
 
-})
+});
 
+
+export let Usuario  = sequelize.define('usuario', {
+    usuario: Sequelize.STRING,
+    senha: Sequelize.STRING,
+    email: Sequelize.STRING
+});
+
+Alunos.hasOne(Usuario);
+
+Alunos.sync();
 Profissoes.sync();
+Usuario.sync();
