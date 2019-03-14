@@ -1,14 +1,16 @@
 import express from 'express';
+import bodyParser from 'body-parser';
+import router from './routes';
 
 let app = express();
-let router = express.Router();
+app.use(bodyParser.urlencoded({ extended:true }));
+app.use(bodyParser.json());
 
-router.route('/books')
-.get((req, res) => {
-res.send('list of all books');
-});
+
+
 
 app.use('/', router);
+
 app.listen(3000, () => {
 console.log('Example app listening on port 3000!');
 })
