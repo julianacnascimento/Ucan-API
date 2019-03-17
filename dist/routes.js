@@ -12,6 +12,14 @@ var _models = require('./models');
 
 var _models2 = require('../dist/models');
 
+var _bcrypt = require('bcrypt');
+
+var _bcrypt2 = _interopRequireDefault(_bcrypt);
+
+var _jsonwevtoken = require('jsonwevtoken');
+
+var _jsonwevtoken2 = _interopRequireDefault(_jsonwevtoken);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
@@ -28,21 +36,6 @@ router.route('/aluno').get(function (req, res) {
 
     _models.Alunos.create(data).then(function (aluno) {
         res.json({ message: 'Aluno adicionado' });
-    });
-});
-
-router.route('/usuario').get(function (req, res) {
-    _models2.Usuario.findAll().then(function (usuario) {
-        res.json(usuario);
-    });
-}).post(function (req, res) {
-    var id = req.body.id;
-    var usuario = req.body.usuario;
-    var senha = req.body.senha;
-    var data = { id: id, usuario: usuario, senha: senha };
-
-    _models2.Usuario.create(data).then(function (usuario) {
-        res.json({ message: 'Usuario adicionado' });
     });
 });
 
@@ -120,6 +113,51 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
             res.json({ erro: 'profissão não encontrada' });
         }
     });
+});
+
+router.route('/usuario').get(function (req, res) {
+    _models2.Usuario.findAll().then(function (usuario) {
+        res.send(usuario);
+    });
+}).post(function (req, res) {
+    var user = req.body.usuario;
+    var email = req.body.email;
+
+    _bcrypt2.default.hash(req.body.password, 12).then(function (result) {
+        _models2.Usuario.create({ user: user, password: result,
+            email: email }).then(function (usuario) {
+            res.json({ message: 'Usuário adicionado' });
+        });
+    });
+});
+
+router.route('/auth').post(function (req, res) {
+    User.findOne({ where: { user: req.body.user } }).then(function (user) {
+        if (usuario) {
+            _bcrypt2.default.compare(req.body.password, user.password).then(function (result) {
+                if (result) {
+                    var token = _jsonwevtoken2.default.sign(user.get({ plain: true }), secret);
+                    res.json({ message: 'Usuario e/ou senha errados', token: token });
+                } else {
+                    res.json({ message: 'Senha errada' });
+                }
+            });
+        } else {
+            res.json({ message: 'Usuário não encontrado' });
+        }
+    });
+});
+
+route.route('/perfil').get(function (req, res) {
+    var token = req.headers['x-acess-token'];
+
+    if (token) {
+        _jsonwevtoken2.default.verify(token, secret, function (err, decoded) {
+            res.json(decoded);
+        });
+    } else {
+        res.json({ message: 'Token não encontrado' });
+    }
 });
 
 exports.default = router;

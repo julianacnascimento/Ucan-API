@@ -1,6 +1,8 @@
 import express from 'express';
 import { Alunos, Profissoes } from './models';
 import { Usuario } from '../dist/models';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwevtoken'
 
 
 let router = express.Router(); 
@@ -22,25 +24,6 @@ router.route('/aluno')
            res.json({message: 'Aluno adicionado'})
        });
     });
-
-    router.route('/usuario')
-    .get((req,res)=>{
-        Usuario.findAll().then(function(usuario){
-            res.json(usuario);
-        })
-    })
-
-    .post((req,res)=>{
-       const id = req.body.id;
-       const usuario = req.body.usuario;
-       const senha = req.body.senha;
-       const data = {id: id, usuario: usuario, senha: senha};
-
-       Usuario.create(data).then((usuario)=>{
-           res.json({message: 'Usuario adicionado'})
-       });
-    });
-
 
 router.route('/aluno/:aluno_id')
     .get((req,res)=>{
@@ -129,6 +112,54 @@ router.route('/profissoes/:profissoes_id')
                 res.json({erro: 'profissão não encontrada'})
             }
         })
+    });
+
+    router.route('/usuario')
+    .get((req, res) => {
+        Usuario.findAll().then(function(usuario) {
+            res.send(usuario);
+        });
     })
+    .post(function (req, res) {
+        let user = req.body.usuario;
+        let email = req.body.email;
+
+    bcrypt.hash(req.body.password, 12).then((result) => {
+        Usuario.create({user:user, password:result, 
+            email:email}).then((usuario) => {
+                res.json({message:'Usuário adicionado'});
+            });
+        });
+    });
+
+router.route('/auth').post((req, res) => {
+    User.findOne({where: {user:req.body.user}}).then((user) => {
+        if(usuario) {
+            bcrypt.compare(req.body.password,
+                user.password).then((result) => {
+                    if (result) {
+                        const token = jwt.sign(user.get({plain:true}), secret);
+                        res.json({message:'Usuario e/ou senha errados', token:token})
+                    } else {
+                        res.json({message:'Senha errada'})
+                    }
+                });
+        } else {
+            res.json({message: 'Usuário não encontrado'})
+        }
+    })
+});
+
+route.route('/perfil').get((req, res) => {
+    const token = req.headers['x-acess-token'];
+
+    if (token) {
+        jwt.verify(token, secret, (err, decoded) => {
+            res.json(decoded);
+        });
+    } else {
+        res.json({message:'Token não encontrado'})
+    }
+});
 
 export default router;
