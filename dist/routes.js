@@ -14,8 +14,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router();
 
-router.route('/alunos').get(function (req, res) {
-    _models.Alunos.findAll().then(function (alunos) {
+router.route('/alunos/:page/:perPage').get(function (req, res) {
+    var pageNo = parseInt(req.params.page);
+    var size = parseInt(req.params.perPage);
+    if (pageNo < 0 || pageNo === 0) {
+        res.send('página não encontrada');
+    }
+    var pular = size * (pageNo - 1);
+    var limite = size;
+    _models.Alunos.findAll({ offset: pular, limit: limite }).then(function (alunos) {
         res.json(alunos);
     });
 }).post(function (req, res) {

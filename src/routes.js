@@ -1,12 +1,21 @@
 import express from 'express';
-import { Alunos, Profissoes } from './models';
+import { Alunos, Profissoes, Materiais } from './models';
 
 
 let router = express.Router(); 
 
-router.route('/alunos')
+
+
+router.route('/alunos/:page/:perPage')
     .get((req,res)=>{
-        Alunos.findAll().then(function(alunos){
+        var pageNo = parseInt(req.params.page);
+        var size = parseInt(req.params.perPage); 
+        if (pageNo < 0 || pageNo === 0) {
+            res.send('página não encontrada');  
+        }
+        var pular = size * (pageNo - 1);
+        var limite = size;
+        Alunos.findAll({offset: pular, limit: limite}).then(function(alunos){
             res.json(alunos);
         })
     })

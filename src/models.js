@@ -21,3 +21,12 @@ export let Profissoes = sequelize.define('profissoes',{
 })
 
 Profissoes.sync();
+
+export let Material = sequelize.define('materiais',{
+    tipo: Sequelize.STRING,
+    titulo:Sequelize.TEXT,
+    area:Sequelize.STRING,
+    link: Sequelize.STRING
+})
+
+Material.sync();

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Profissoes = exports.Alunos = undefined;
+exports.Material = exports.Profissoes = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -32,3 +32,12 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 });
 
 Profissoes.sync();
+
+var Material = exports.Material = sequelize.define('materiais', {
+    tipo: _sequelize2.default.STRING,
+    titulo: _sequelize2.default.TEXT,
+    area: _sequelize2.default.STRING,
+    link: _sequelize2.default.STRING
+});
+
+Material.sync();
