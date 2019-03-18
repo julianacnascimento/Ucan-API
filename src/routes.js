@@ -2,7 +2,7 @@ import express from 'express';
 import { Alunos, Profissoes } from './models';
 import { Usuario } from '../dist/models';
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwevtoken'
+import jwt from 'jsonwebtoken'
 
 
 let router = express.Router(); 
@@ -121,11 +121,11 @@ router.route('/profissoes/:profissoes_id')
         });
     })
     .post(function (req, res) {
-        let user = req.body.usuario;
+        let login = req.body.login;
         let email = req.body.email;
 
-    bcrypt.hash(req.body.password, 12).then((result) => {
-        Usuario.create({user:user, password:result, 
+    bcrypt.hash(req.body.senha, 12).then((result) => {
+        Usuario.create({login:login, senha:result, 
             email:email}).then((usuario) => {
                 res.json({message:'Usuário adicionado'});
             });
@@ -133,30 +133,30 @@ router.route('/profissoes/:profissoes_id')
     });
 
 router.route('/auth').post((req, res) => {
-    User.findOne({where: {user:req.body.user}}).then((user) => {
+    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
         if(usuario) {
-            bcrypt.compare(req.body.password,
-                user.password).then((result) => {
+            bcrypt.compare(req.body.senha,
+                usuario.senha).then((result) => {
                     if (result) {
-                        const token = jwt.sign(user.get({plain:true}), secret);
-                        res.json({message:'Usuario e/ou senha errados', token:token})
+                        const token = jwt.sign(usuario.get({plain:true}), secret);
+                        res.json({message:'Usuario autenticado', token:token})
                     } else {
                         res.json({message:'Senha errada'})
                     }
-                });
+                })
         } else {
             res.json({message: 'Usuário não encontrado'})
         }
     })
 });
 
-route.route('/perfil').get((req, res) => {
-    const token = req.headers['x-acess-token'];
+router.route('/perfil').get((req, res) => {
+    const token = req.headers['x-access-token'];
 
     if (token) {
         jwt.verify(token, secret, (err, decoded) => {
             res.json(decoded);
-        });
+        })
     } else {
         res.json({message:'Token não encontrado'})
     }
