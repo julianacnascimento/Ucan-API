@@ -1,8 +1,7 @@
 import express from 'express';
-import { Alunos, Profissoes } from './models';
-import { Usuario } from '../dist/models';
+import { Alunos, Profissoes, Usuario } from './models';
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwevtoken'
+import jwt from 'jsonwebtoken'
 
 
 let router = express.Router(); 
@@ -121,11 +120,11 @@ router.route('/profissoes/:profissoes_id')
         });
     })
     .post(function (req, res) {
-        let user = req.body.usuario;
+        let login = req.body.login;
         let email = req.body.email;
 
-    bcrypt.hash(req.body.password, 12).then((result) => {
-        Usuario.create({user:user, password:result, 
+    bcrypt.hash(req.body.senha, 12).then((result) => {
+        Usuario.create({login:login, senha:result, 
             email:email}).then((usuario) => {
                 res.json({message:'Usuário adicionado'});
             });
@@ -133,15 +132,15 @@ router.route('/profissoes/:profissoes_id')
     });
 
 router.route('/auth').post((req, res) => {
-    User.findOne({where: {user:req.body.user}}).then((user) => {
+    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
         if(usuario) {
-            bcrypt.compare(req.body.password,
-                user.password).then((result) => {
-                    if (result) {
-                        const token = jwt.sign(user.get({plain:true}), secret);
-                        res.json({message:'Usuario e/ou senha errados', token:token})
-                    } else {
-                        res.json({message:'Senha errada'})
+            bcrypt.compare(req.body.senha,
+                usuario.senha).then((result) => {
+                    if (result) {  // Se a senha estiver correta;
+                        const token = jwt.sign(usuario.get({plain:true}), secret);
+                        res.json({message:'Usuário autenticado!', token:token})
+                    } else { //Se a senha estiver errada;
+                        res.json({message:'Usuário e/ou senha errados!'})
                     }
                 });
         } else {
@@ -150,7 +149,7 @@ router.route('/auth').post((req, res) => {
     })
 });
 
-route.route('/perfil').get((req, res) => {
+router.route('/perfil').get((req, res) => {
     const token = req.headers['x-acess-token'];
 
     if (token) {

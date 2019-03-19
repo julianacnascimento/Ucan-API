@@ -10,15 +10,13 @@ var _express2 = _interopRequireDefault(_express);
 
 var _models = require('./models');
 
-var _models2 = require('../dist/models');
-
 var _bcrypt = require('bcrypt');
 
 var _bcrypt2 = _interopRequireDefault(_bcrypt);
 
-var _jsonwevtoken = require('jsonwevtoken');
+var _jsonwebtoken = require('jsonwebtoken');
 
-var _jsonwevtoken2 = _interopRequireDefault(_jsonwevtoken);
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -116,15 +114,15 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
 });
 
 router.route('/usuario').get(function (req, res) {
-    _models2.Usuario.findAll().then(function (usuario) {
+    _models.Usuario.findAll().then(function (usuario) {
         res.send(usuario);
     });
 }).post(function (req, res) {
-    var user = req.body.usuario;
+    var login = req.body.login;
     var email = req.body.email;
 
-    _bcrypt2.default.hash(req.body.password, 12).then(function (result) {
-        _models2.Usuario.create({ user: user, password: result,
+    _bcrypt2.default.hash(req.body.senha, 12).then(function (result) {
+        _models.Usuario.create({ login: login, senha: result,
             email: email }).then(function (usuario) {
             res.json({ message: 'Usuário adicionado' });
         });
@@ -132,14 +130,16 @@ router.route('/usuario').get(function (req, res) {
 });
 
 router.route('/auth').post(function (req, res) {
-    User.findOne({ where: { user: req.body.user } }).then(function (user) {
+    _models.Usuario.findOne({ where: { login: req.body.login } }).then(function (usuario) {
         if (usuario) {
-            _bcrypt2.default.compare(req.body.password, user.password).then(function (result) {
+            _bcrypt2.default.compare(req.body.senha, usuario.senha).then(function (result) {
                 if (result) {
-                    var token = _jsonwevtoken2.default.sign(user.get({ plain: true }), secret);
-                    res.json({ message: 'Usuario e/ou senha errados', token: token });
+                    // Se a senha estiver correta;
+                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), secret);
+                    res.json({ message: 'Usuário autenticado!', token: token });
                 } else {
-                    res.json({ message: 'Senha errada' });
+                    //Se a senha estiver errada;
+                    res.json({ message: 'Usuário e/ou senha errados!' });
                 }
             });
         } else {
@@ -148,11 +148,11 @@ router.route('/auth').post(function (req, res) {
     });
 });
 
-route.route('/perfil').get(function (req, res) {
+router.route('/perfil').get(function (req, res) {
     var token = req.headers['x-acess-token'];
 
     if (token) {
-        _jsonwevtoken2.default.verify(token, secret, function (err, decoded) {
+        _jsonwebtoken2.default.verify(token, secret, function (err, decoded) {
             res.json(decoded);
         });
     } else {

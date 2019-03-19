@@ -31,13 +31,13 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 });
 
 var Usuario = exports.Usuario = sequelize.define('usuario', {
-    usuario: _sequelize2.default.STRING,
+    login: _sequelize2.default.STRING,
     senha: _sequelize2.default.STRING,
     email: _sequelize2.default.STRING
 });
 
-Alunos.hasOne(Usuario);
+Usuario.hasOne(Alunos);
 
 Alunos.sync();
 Profissoes.sync();
-Usuario.sync();
+Usuario.sync({ force: 'true' });
