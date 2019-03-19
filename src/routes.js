@@ -1,11 +1,8 @@
 import express from 'express';
-<<<<<<< HEAD
-import { Alunos, Profissoes, Usuario } from './models';
+import { Alunos, Profissoes, Materiais, Usuario } from './models';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-=======
-import { Alunos, Profissoes, Materiais } from './models';
->>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
+import { createSecretKey } from 'crypto';
 
 
 let router = express.Router(); 
@@ -134,13 +131,13 @@ router.route('/profissoes/:profissoes_id')
     .post(function (req, res) {
         let login = req.body.login;
         let email = req.body.email;
-
-    bcrypt.hash(req.body.senha, 12).then((result) => {
-        Usuario.create({login:login, senha:result, 
-            email:email}).then((usuario) => {
-                res.json({message:'Usuário adicionado'});
+        
+        bcrypt.hash(req.body.senha, 12).then((result) => {
+            Usuario.create({login:login, senha:result, 
+                email:email}).then((usuario) => {
+                    res.json({message:'Usuário adicionado'});
+                });
             });
-        });
     });
 
 router.route('/auth').post((req, res) => {
@@ -149,7 +146,7 @@ router.route('/auth').post((req, res) => {
             bcrypt.compare(req.body.senha,
                 usuario.senha).then((result) => {
                     if (result) {  // Se a senha estiver correta;
-                        const token = jwt.sign(usuario.get({plain:true}), secret);
+                        const token = jwt.sign(usuario.get({plain:true}), usuario.senha);
                         res.json({message:'Usuário autenticado!', token:token})
                     } else { //Se a senha estiver errada;
                         res.json({message:'Usuário e/ou senha errados!'})

@@ -14,6 +14,8 @@ export let Alunos = sequelize.define('alunos',{
     curso: Sequelize.STRING
 });
 
+Alunos.sync();
+
 
 //aluno referencia Alunos
 export let Personalidades= sequelize.define('personalidades', {

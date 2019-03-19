@@ -18,17 +18,14 @@ var _jsonwebtoken = require('jsonwebtoken');
 
 var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 
+var _crypto = require('crypto');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
 
-<<<<<<< HEAD
 router.route('/aluno').get(function (req, res) {
-    _models.Alunos.findAll().then(function (alunos) {
-=======
-router.route('/alunos').get(function (req, res) {
     _models.Alunos.findAll({ attributes: ['nome', 'matricula', 'faculdade', 'curso'] }).then(function (alunos) {
->>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
         res.json(alunos);
     });
 }).post(function (req, res) {
@@ -122,7 +119,6 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
     });
 });
 
-<<<<<<< HEAD
 router.route('/usuario').get(function (req, res) {
     _models.Usuario.findAll().then(function (usuario) {
         res.send(usuario);
@@ -145,7 +141,7 @@ router.route('/auth').post(function (req, res) {
             _bcrypt2.default.compare(req.body.senha, usuario.senha).then(function (result) {
                 if (result) {
                     // Se a senha estiver correta;
-                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), secret);
+                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), usuario.senha);
                     res.json({ message: 'Usuário autenticado!', token: token });
                 } else {
                     //Se a senha estiver errada;
@@ -170,7 +166,6 @@ router.route('/perfil').get(function (req, res) {
     }
 });
 
-=======
 router.route('/materiais').get(function (req, res) {
     _models.Materiais.findAll({
         attributes: ['titulo', 'descrição', 'link']
@@ -197,5 +192,4 @@ router.route('/materiais/:materiais_id').get(function (req, res) {
         }
     });
 });
->>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
 exports.default = router;

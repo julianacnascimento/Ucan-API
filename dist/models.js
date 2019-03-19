@@ -3,11 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-<<<<<<< HEAD
-exports.Usuario = exports.Profissoes = exports.Alunos = undefined;
-=======
-exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
->>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
+exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Usuario = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -28,6 +24,8 @@ var Alunos = exports.Alunos = sequelize.define('alunos', {
     matricula: _sequelize2.default.INTEGER,
     curso: _sequelize2.default.STRING
 });
+
+Alunos.sync();
 
 //aluno referencia Alunos
 var Personalidades = exports.Personalidades = sequelize.define('personalidades', {
@@ -56,6 +54,14 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 });
 Profissoes.sync();
 
+var Usuario = exports.Usuario = sequelize.define('usuario', {
+    login: _sequelize2.default.STRING,
+    senha: _sequelize2.default.STRING,
+    email: _sequelize2.default.STRING
+});
+Alunos.hasOne(Usuario);
+Usuario.sync();
+
 var PerfisProfissionais = exports.PerfisProfissionais = sequelize.define('perfisProfissionais', {
     profissoes: _sequelize2.default.INTEGER,
     realista: _sequelize2.default.INTEGER,
@@ -79,20 +85,6 @@ var MateriaisProfissoes = exports.MateriaisProfissoes = sequelize.define('materi
     etapa: _sequelize2.default.INTEGER
 });
 
-<<<<<<< HEAD
-var Usuario = exports.Usuario = sequelize.define('usuario', {
-    login: _sequelize2.default.STRING,
-    senha: _sequelize2.default.STRING,
-    email: _sequelize2.default.STRING
-});
-
-Usuario.hasOne(Alunos);
-
-Alunos.sync();
-Profissoes.sync();
-Usuario.sync({ force: 'true' });
-=======
 Materiais.belongsToMany(Profissoes, { through: 'materiaisProfissoes', foreignKey: 'profissoesId' });
 Profissoes.belongsToMany(Materiais, { through: 'materiaisProfissoes', foreignKey: 'materiaisId' });
 MateriaisProfissoes.sync();
->>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
