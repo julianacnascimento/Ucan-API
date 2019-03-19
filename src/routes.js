@@ -151,7 +151,7 @@ router.route('/auth').post((req, res) => {
                     } else { //Se a senha estiver errada;
                         res.json({message:'Usuário e/ou senha errados!'})
                     }
-                });
+                })
         } else {
             res.json({message: 'Usuário não encontrado'})
         }
@@ -164,7 +164,7 @@ router.route('/perfil').get((req, res) => {
     if (token) {
         jwt.verify(token, secret, (err, decoded) => {
             res.json(decoded);
-        });
+        })
     } else {
         res.json({message:'Token não encontrado'})
     }
