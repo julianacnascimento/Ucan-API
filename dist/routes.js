@@ -22,15 +22,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router();
 
+<<<<<<< HEAD
 router.route('/aluno').get(function (req, res) {
     _models.Alunos.findAll().then(function (alunos) {
+=======
+router.route('/alunos').get(function (req, res) {
+    _models.Alunos.findAll({ attributes: ['nome', 'matricula', 'faculdade', 'curso'] }).then(function (alunos) {
+>>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
         res.json(alunos);
     });
 }).post(function (req, res) {
     var nome = req.body.nome;
     var matricula = req.body.matricula;
-    var personalidade = req.body.personalidade;
-    var data = { nome: nome, matricula: matricula, personalidade: personalidade };
+    var faculdade = req.body.faculdade;
+    var curso = req.body.curso;
+    var data = { nome: nome, matricula: matricula, faculdade: faculdade, curso: curso };
 
     _models.Alunos.create(data).then(function (aluno) {
         res.json({ message: 'Aluno adicionado' });
@@ -50,7 +56,8 @@ router.route('/aluno/:aluno_id').get(function (req, res) {
         if (aluno) {
             aluno.update({ nome: req.body.nome,
                 matricula: req.body.matricula,
-                personalidade: req.body.personalidade
+                faculdade: req.body.faculdade,
+                curso: req.body.curso
             });
         } else {
             res.json({ erro: 'aluno não encontrado' });
@@ -75,7 +82,8 @@ router.route('/profissao').get(function (req, res) {
 }).post(function (req, res) {
     var nome = req.body.nome;
     var descrição = req.body.descrição;
-    var data = { nome: nome, descrição: descrição };
+    var competencias = req.body.competencias;
+    var data = { nome: nome, descrição: descrição, competencias: competencias };
 
     _models.Profissoes.create(data).then(function (profissao) {
         res.json({ message: 'Profissão adicionada' });
@@ -95,7 +103,8 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
         if (profissao) {
             profissao.update({
                 nome: req.body.nome,
-                descrição: req.body.descrição
+                descrição: req.body.descrição,
+                competencias: req.body.competencias
             });
             res.json({ message: 'dados atualizados com sucesso' });
         } else {
@@ -113,6 +122,7 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
     });
 });
 
+<<<<<<< HEAD
 router.route('/usuario').get(function (req, res) {
     _models.Usuario.findAll().then(function (usuario) {
         res.send(usuario);
@@ -160,4 +170,32 @@ router.route('/perfil').get(function (req, res) {
     }
 });
 
+=======
+router.route('/materiais').get(function (req, res) {
+    _models.Materiais.findAll({
+        attributes: ['titulo', 'descrição', 'link']
+    }).then(function (materiais) {
+        res.json(materiais);
+    });
+}).post(function (req, res) {
+    var titulo = req.body.titulo;
+    var descrição = req.body.descrição;
+    var link = req.body.link;
+
+    var data = { titulo: titulo, descrição: descrição, link: link };
+
+    _models.Materiais.create(data).then(function (material) {
+        res.json({ message: 'material cadastrado com sucesso!' });
+    });
+});
+router.route('/materiais/:materiais_id').get(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (profissao) {
+        if (profissao) {
+            res.json(profissao);
+        } else {
+            res.json({ erro: 'profissão não encontrada' });
+        }
+    });
+});
+>>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
 exports.default = router;

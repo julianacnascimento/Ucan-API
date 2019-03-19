@@ -1,14 +1,23 @@
 import express from 'express';
+<<<<<<< HEAD
 import { Alunos, Profissoes, Usuario } from './models';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+=======
+import { Alunos, Profissoes, Materiais } from './models';
+>>>>>>> 2dfa89aecc89c753631deb6f693aa57469b821de
 
 
 let router = express.Router(); 
 
 router.route('/aluno')
     .get((req,res)=>{
-        Alunos.findAll().then(function(alunos){
+        Alunos.findAll({attributes:[
+            'nome',
+            'matricula', 
+            'faculdade', 
+            'curso'
+        ]}).then(function(alunos){
             res.json(alunos);
         })
     })
@@ -16,12 +25,14 @@ router.route('/aluno')
     .post((req,res)=>{
        const nome = req.body.nome;
        const matricula = req.body.matricula;
-       const personalidade = req.body.personalidade;
-       const data = {nome: nome, matricula: matricula, personalidade: personalidade};
+       const faculdade = req.body.faculdade;
+       const curso = req.body.curso
+       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso}; 
 
        Alunos.create(data).then((aluno)=>{
            res.json({message: 'Aluno adicionado'})
        });
+
     });
 
 router.route('/aluno/:aluno_id')
@@ -40,7 +51,8 @@ router.route('/aluno/:aluno_id')
             if (aluno){
                 aluno.update({nome:req.body.nome, 
                 matricula: req.body.matricula, 
-                personalidade: req.body.personalidade
+                faculdade: req.body.faculdade,
+                curso: req.body.curso
                 });
             }else{
                 res.json({erro: 'aluno não encontrado'});
@@ -58,9 +70,7 @@ router.route('/aluno/:aluno_id')
                 res.json({error:'aluno não encontrado'});
             }
         });
-    });
-
-
+    })
 
 
 router.route('/profissao')
@@ -72,7 +82,8 @@ router.route('/profissao')
     .post((req,res)=>{
         const nome = req.body.nome;
         const descrição = req.body.descrição;
-        const data = {nome: nome, descrição: descrição};
+        const competencias = req.body.competencias;
+        const data = {nome: nome, descrição: descrição, competencias: competencias};
 
         Profissoes.create(data).then((profissao)=>{
             res.json({message: 'Profissão adicionada'})
@@ -94,7 +105,8 @@ router.route('/profissoes/:profissoes_id')
             if(profissao){
                 profissao.update({
                     nome: req.body.nome,
-                    descrição: req.body.descrição
+                    descrição: req.body.descrição,
+                    competencias: req.body.competencias
                 })
                 res.json({message:'dados atualizados com sucesso'});
             }else{
@@ -161,4 +173,37 @@ router.route('/perfil').get((req, res) => {
     }
 });
 
+router.route('/materiais')
+    .get((req, res)=>{
+        Materiais.findAll({
+            attributes:[
+                'titulo',
+                'descrição',
+                'link'
+            ]
+        }).then(function(materiais){
+            res.json(materiais)
+        })
+    })
+    .post((req, res)=>{
+        const titulo = req.body.titulo;
+        const descrição = req.body.descrição;
+        const link = req.body.link;
+
+        const data = {titulo: titulo, descrição: descrição, link: link};
+
+        Materiais.create(data).then((material)=>{
+            res.json({message: 'material cadastrado com sucesso!'});
+        });
+    })
+router.route('/materiais/:materiais_id')
+    .get((req, res)=>{
+        Materiais.findById(req.params.materiais_id).then((profissao)=>{
+            if(profissao){
+                res.json(profissao);
+            }else{
+                res.json({erro:'profissão não encontrada'});
+            }
+        })
+    })
 export default router;
