@@ -127,11 +127,33 @@ router.route('/materiais').get(function (req, res) {
     });
 });
 router.route('/materiais/:materiais_id').get(function (req, res) {
-    _models.Materiais.findById(req.params.materiais_id).then(function (profissao) {
-        if (profissao) {
-            res.json(profissao);
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            res.json(maerial);
         } else {
             res.json({ erro: 'profissão não encontrada' });
+        }
+    });
+}).put(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            material.update({
+                titulo: req.body.titulo,
+                descrição: req.body.descrição,
+                link: req.body.link
+            });
+            res.json({ message: 'dados adicionados com sucesso' });
+        } else {
+            res.json({ erro: 'material não encontrado' });
+        }
+    });
+}).delete(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            material.destroy();
+            res.json({ message: 'material deletado com sucesso!' });
+        } else {
+            res.json({ error: 'material não encontrado' });
         }
     });
 });

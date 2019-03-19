@@ -145,11 +145,35 @@ router.route('/materiais')
     })
 router.route('/materiais/:materiais_id')
     .get((req, res)=>{
-        Materiais.findById(req.params.materiais_id).then((profissao)=>{
-            if(profissao){
-                res.json(profissao);
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                res.json(maerial);
             }else{
                 res.json({erro:'profissão não encontrada'});
+            }
+        })
+    })
+    .put((req,res)=>{
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                material.update({
+                    titulo: req.body.titulo,
+                    descrição: req.body.descrição,
+                    link: req.body.link
+                })
+                res.json({message: 'dados adicionados com sucesso'});
+            }else{
+                res.json({erro: 'material não encontrado'});
+            }
+        })
+    })
+    .delete((req, res)=>{
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                material.destroy();
+                res.json({message:'material deletado com sucesso!'});
+            }else{
+                res.json({error:'material não encontrado'});
             }
         })
     })
