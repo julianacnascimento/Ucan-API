@@ -14,7 +14,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var router = _express2.default.Router();
 
-router.route('/alunos').get(function (req, res) {
+router.route('/alunos')
+/* .get((req,res)=>{
+     Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
+         res.json(alunos);
+     })
+ })
+  
+ */
+.get(function (req, res) {
     _models.Alunos.findAll({ attributes: ['nome', 'matricula', 'faculdade', 'curso'] }).then(function (alunos) {
         res.json(alunos);
     });
@@ -25,13 +33,38 @@ router.route('/alunos').get(function (req, res) {
     var curso = req.body.curso;
     var data = { nome: nome, matricula: matricula, faculdade: faculdade, curso: curso };
 
+    var realista = req.body.realista;
+    var intelectual = req.body.intelectual;
+    var social = req.body.social;
+    var empreendedor = req.body.empreendedor;
+    var convencional = req.body.convencional;
+    var artistico = req.body.artistico;
+
     _models.Alunos.create(data).then(function (aluno) {
-        res.json({ message: 'Aluno adicionado' });
+        var data2 = {
+            alunosId: aluno.id,
+            realista: realista,
+            intelectual: intelectual,
+            social: social, empreendedor: empreendedor,
+            convencional: convencional,
+            artistico: artistico
+        };
+        _models.Personalidades.create(data2).then(function (personalidade) {
+            res.json({ message: 'Aluno adicionado' });
+        });
     });
 });
 
 router.route('/alunos/:aluno_id').get(function (req, res) {
-    _models.Alunos.findById(req.params.aluno_id).then(function (aluno) {
+    _models.Alunos.findById(req.params.aluno_id, { include: [{
+            model: _models.Personalidades,
+            attributes: ['realista', 'intelectual', 'social', 'empreendedor', 'convencional', 'artistico']
+        }],
+        where: {
+            alunosId: req.params.aluno_id
+        },
+        attributes: ['nome', 'matricula', 'faculdade', 'curso']
+    }).then(function (aluno) {
         if (aluno) {
             res.json(aluno);
         } else {
@@ -80,7 +113,7 @@ router.route('/profissoes').get(function (req, res) {
 router.route('/profissoes/:profissoes_id').get(function (req, res) {
     _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
         if (profissao) {
-            res.json(profissao);
+            res.json(profissao.getMateriais());
         } else {
             res.json({ erro: 'profissao não encontrado' });
         }
@@ -106,6 +139,24 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
         } else {
             res.json({ erro: 'profissão não encontrada' });
         }
+    });
+});
+router.route('/profissoes/:profissoes_id/trilha').get(function (req, res) {
+    var id = req.params.profissoes_id;
+    _models.Materiais.findAll({ include: [{ model: _models.MateriaisProfissoes, as: 'materiaisId' /*, where:{
+                                                                                                  profissoesId: id
+                                                                                                  }*/ }] }).then(function (materiais) {
+        res.json(materiais);
+    });
+}).post(function (req, res) {
+    var pontos = req.body.pontos;
+    var etapa = req.body.etapa;
+    var materiaisId = req.body.materiaisId;
+    var profissoesId = req.body.profissoesId;
+
+    var data = { pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId };
+    _models.MateriaisProfissoes.create(data).then(function (mt) {
+        res.json({ message: 'material adicionado na trilha' });
     });
 });
 
@@ -157,4 +208,5 @@ router.route('/materiais/:materiais_id').get(function (req, res) {
         }
     });
 });
+
 exports.default = router;

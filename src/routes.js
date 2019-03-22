@@ -1,10 +1,17 @@
 import express from 'express';
-import { Alunos, Profissoes, Materiais } from './models';
+import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades } from './models';
 
 
 let router = express.Router(); 
 
 router.route('/alunos')
+   /* .get((req,res)=>{
+        Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
+            res.json(alunos);
+        })
+    })
+     
+    */
     .get((req,res)=>{
         Alunos.findAll({attributes:[
             'nome',
@@ -21,18 +28,60 @@ router.route('/alunos')
        const matricula = req.body.matricula;
        const faculdade = req.body.faculdade;
        const curso = req.body.curso
-       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso}; 
+       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso};
+       
+       const realista = req.body.realista;
+       const intelectual = req.body.intelectual;
+       const social = req.body.social;
+       const empreendedor = req.body.empreendedor;
+       const convencional= req.body.convencional;
+       const artistico = req.body.artistico;
 
        Alunos.create(data).then((aluno)=>{
-           res.json({message: 'Aluno adicionado'})
-       });
+           const data2 = {
+                alunosId: aluno.id,
+                realista:realista, 
+                intelectual:intelectual, 
+                social:social,empreendedor:empreendedor, 
+                convencional:convencional,
+                artistico: artistico
+            }
+        Personalidades.create(data2).then((personalidade)=>{
+            res.json({message: 'Aluno adicionado'})
+         }) 
+
+       })
+       
+       
+       
+       
 
     });
 
 
 router.route('/alunos/:aluno_id')
     .get((req,res)=>{
-        Alunos.findById(req.params.aluno_id).then((aluno)=>{
+        Alunos.findById(req.params.aluno_id,{include: [ {
+            model: Personalidades,
+            attributes:[
+                'realista',
+                'intelectual',
+                'social',
+                'empreendedor',
+                'convencional',
+                'artistico'
+            ]
+        }],
+            where: {
+                alunosId: req.params.aluno_id 
+            },
+            attributes:[
+                'nome',
+                'matricula', 
+                'faculdade', 
+                'curso'
+            ]
+        }).then((aluno)=>{
             if(aluno){
                 res.json(aluno);
             }else{
@@ -42,7 +91,7 @@ router.route('/alunos/:aluno_id')
     })
 
     .put((req,res)=>{
-        Alunos.findById(req.params.aluno_id).then((aluno)=>{
+        Alunos.findById(req.params.aluno_id ).then((aluno)=>{
             if (aluno){
                 aluno.update({nome:req.body.nome, 
                 matricula: req.body.matricula, 
@@ -89,7 +138,7 @@ router.route('/profissoes/:profissoes_id')
     .get((req,res)=>{
         Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
             if(profissao){
-                res.json(profissao);
+                res.json(profissao.getMateriais());
             }else{
                 res.json({erro: 'profissao não encontrado'})
             }
@@ -119,6 +168,26 @@ router.route('/profissoes/:profissoes_id')
             }
         })
     })
+router.route('/profissoes/:profissoes_id/trilha')
+    .get((req, res)=>{
+        let id = req.params.profissoes_id;
+        Materiais.findAll({include: [{model: MateriaisProfissoes, as: 'materiaisId'/*, where:{
+            profissoesId: id
+        }*/}]}).then(function(materiais){
+            res.json(materiais);
+        })
+    })
+    .post((req, res)=>{
+        const pontos = req.body.pontos;
+        const etapa = req.body.etapa;
+        const materiaisId = req.body.materiaisId;
+        const profissoesId = req.body.profissoesId;
+
+        const data = {pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId};
+        MateriaisProfissoes.create(data).then((mt)=>{
+            res.json({message: 'material adicionado na trilha'})
+        })
+    })
 
 router.route('/materiais')
     .get((req, res)=>{
@@ -129,7 +198,7 @@ router.route('/materiais')
                 'link'
             ]
         }).then(function(materiais){
-            res.json(materiais)
+            res.json(materiais);
         })
     })
     .post((req, res)=>{
@@ -177,4 +246,7 @@ router.route('/materiais/:materiais_id')
             }
         })
     })
+
+
+
 export default router;
