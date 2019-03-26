@@ -51,10 +51,6 @@ router.route('/alunos')
          }) 
 
        })
-       
-       
-       
-       
 
     });
 
@@ -107,9 +103,21 @@ router.route('/alunos/:aluno_id')
     .delete((req,res)=>{
         Alunos.findById(req.params.aluno_id).then((aluno)=>{
             if(aluno){
-                aluno.destroy().then((book)=>{
-                    res.json({message: 'perfil deletado'})
-                });
+                Personalidades.findOne({where: {alunosId: req.params.aluno_id}}).then((personalidade)=>{
+                    if(personalidade){
+                        personalidade.destroy().then(()=>{
+                            aluno.destroy().then(()=>{
+
+                                res.json({message: 'perfil deletado'})
+                            });
+                        })
+                    }else{
+                        aluno.destroy().then((book)=>{
+
+                            res.json({message: 'perfil deletado'})
+                        });
+                    }
+                })
             }else{
                 res.json({error:'aluno não encontrado'});
             }

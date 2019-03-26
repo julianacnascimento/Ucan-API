@@ -86,8 +86,20 @@ router.route('/alunos/:aluno_id').get(function (req, res) {
 }).delete(function (req, res) {
     _models.Alunos.findById(req.params.aluno_id).then(function (aluno) {
         if (aluno) {
-            aluno.destroy().then(function (book) {
-                res.json({ message: 'perfil deletado' });
+            _models.Personalidades.findOne({ where: { alunosId: req.params.aluno_id } }).then(function (personalidade) {
+                if (personalidade) {
+                    personalidade.destroy().then(function () {
+                        aluno.destroy().then(function () {
+
+                            res.json({ message: 'perfil deletado' });
+                        });
+                    });
+                } else {
+                    aluno.destroy().then(function (book) {
+
+                        res.json({ message: 'perfil deletado' });
+                    });
+                }
             });
         } else {
             res.json({ error: 'aluno não encontrado' });
