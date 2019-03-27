@@ -1,13 +1,28 @@
 import express from 'express';
+<<<<<<< HEAD
+import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades } from './models';
+=======
 import { Alunos, Profissoes, Materiais, Usuario } from './models';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { createSecretKey } from 'crypto';
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 
 let router = express.Router(); 
 
+<<<<<<< HEAD
+router.route('/alunos')
+   /* .get((req,res)=>{
+        Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
+            res.json(alunos);
+        })
+    })
+     
+    */
+=======
 router.route('/aluno')
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
     .get((req,res)=>{
         Alunos.findAll({attributes:[
             'nome',
@@ -24,17 +39,55 @@ router.route('/aluno')
        const matricula = req.body.matricula;
        const faculdade = req.body.faculdade;
        const curso = req.body.curso
-       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso}; 
+       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso};
+       
+       const realista = req.body.realista;
+       const intelectual = req.body.intelectual;
+       const social = req.body.social;
+       const empreendedor = req.body.empreendedor;
+       const convencional= req.body.convencional;
+       const artistico = req.body.artistico;
 
        Alunos.create(data).then((aluno)=>{
-           res.json({message: 'Aluno adicionado'})
-       });
+           const data2 = {
+                alunosId: aluno.id,
+                realista:realista, 
+                intelectual:intelectual, 
+                social:social,empreendedor:empreendedor, 
+                convencional:convencional,
+                artistico: artistico
+            }
+        Personalidades.create(data2).then((personalidade)=>{
+            res.json({message: 'Aluno adicionado'})
+         }) 
+
+       })
 
     });
 
 router.route('/aluno/:aluno_id')
     .get((req,res)=>{
-        Alunos.findById(req.params.aluno_id).then((aluno)=>{
+        Alunos.findById(req.params.aluno_id,{include: [ {
+            model: Personalidades,
+            attributes:[
+                'realista',
+                'intelectual',
+                'social',
+                'empreendedor',
+                'convencional',
+                'artistico'
+            ]
+        }],
+            where: {
+                alunosId: req.params.aluno_id 
+            },
+            attributes:[
+                'nome',
+                'matricula', 
+                'faculdade', 
+                'curso'
+            ]
+        }).then((aluno)=>{
             if(aluno){
                 res.json(aluno);
             }else{
@@ -44,7 +97,7 @@ router.route('/aluno/:aluno_id')
     })
 
     .put((req,res)=>{
-        Alunos.findById(req.params.aluno_id).then((aluno)=>{
+        Alunos.findById(req.params.aluno_id ).then((aluno)=>{
             if (aluno){
                 aluno.update({nome:req.body.nome, 
                 matricula: req.body.matricula, 
@@ -60,9 +113,21 @@ router.route('/aluno/:aluno_id')
     .delete((req,res)=>{
         Alunos.findById(req.params.aluno_id).then((aluno)=>{
             if(aluno){
-                aluno.destroy().then((book)=>{
-                    res.json({message: 'perfil deletado'})
-                });
+                Personalidades.findOne({where: {alunosId: req.params.aluno_id}}).then((personalidade)=>{
+                    if(personalidade){
+                        personalidade.destroy().then(()=>{
+                            aluno.destroy().then(()=>{
+
+                                res.json({message: 'perfil deletado'})
+                            });
+                        })
+                    }else{
+                        aluno.destroy().then((book)=>{
+
+                            res.json({message: 'perfil deletado'})
+                        });
+                    }
+                })
             }else{
                 res.json({error:'aluno não encontrado'});
             }
@@ -91,7 +156,7 @@ router.route('/profissoes/:profissoes_id')
     .get((req,res)=>{
         Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
             if(profissao){
-                res.json(profissao);
+                res.json(profissao.getMateriais());
             }else{
                 res.json({erro: 'profissao não encontrado'})
             }
@@ -156,6 +221,28 @@ router.route('/auth').post((req, res) => {
             res.json({message: 'Usuário não encontrado'})
         }
     })
+<<<<<<< HEAD
+router.route('/profissoes/:profissoes_id/trilha')
+    .get((req, res)=>{
+        let id = req.params.profissoes_id;
+        Materiais.findAll({include: [{model: MateriaisProfissoes, as: 'materiaisId'/*, where:{
+            profissoesId: id
+        }*/}]}).then(function(materiais){
+            res.json(materiais);
+        })
+    })
+    .post((req, res)=>{
+        const pontos = req.body.pontos;
+        const etapa = req.body.etapa;
+        const materiaisId = req.body.materiaisId;
+        const profissoesId = req.body.profissoesId;
+
+        const data = {pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId};
+        MateriaisProfissoes.create(data).then((mt)=>{
+            res.json({message: 'material adicionado na trilha'})
+        })
+    })
+=======
 });
 
 router.route('/perfil').get((req, res) => {
@@ -169,6 +256,7 @@ router.route('/perfil').get((req, res) => {
         res.json({message:'Token não encontrado'})
     }
 });
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 router.route('/materiais')
     .get((req, res)=>{
@@ -179,7 +267,7 @@ router.route('/materiais')
                 'link'
             ]
         }).then(function(materiais){
-            res.json(materiais)
+            res.json(materiais);
         })
     })
     .post((req, res)=>{
@@ -195,12 +283,39 @@ router.route('/materiais')
     })
 router.route('/materiais/:materiais_id')
     .get((req, res)=>{
-        Materiais.findById(req.params.materiais_id).then((profissao)=>{
-            if(profissao){
-                res.json(profissao);
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                res.json(maerial);
             }else{
                 res.json({erro:'profissão não encontrada'});
             }
         })
     })
+    .put((req,res)=>{
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                material.update({
+                    titulo: req.body.titulo,
+                    descrição: req.body.descrição,
+                    link: req.body.link
+                })
+                res.json({message: 'dados adicionados com sucesso'});
+            }else{
+                res.json({erro: 'material não encontrado'});
+            }
+        })
+    })
+    .delete((req, res)=>{
+        Materiais.findById(req.params.materiais_id).then((material)=>{
+            if(material){
+                material.destroy();
+                res.json({message:'material deletado com sucesso!'});
+            }else{
+                res.json({error:'material não encontrado'});
+            }
+        })
+    })
+
+
+
 export default router;
