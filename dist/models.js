@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
+exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Usuario = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -24,6 +24,11 @@ var Alunos = exports.Alunos = sequelize.define('alunos', {
     matricula: _sequelize2.default.INTEGER,
     curso: _sequelize2.default.STRING
 });
+<<<<<<< HEAD
+=======
+
+Alunos.sync();
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 //aluno referencia Alunos
 var Personalidades = exports.Personalidades = sequelize.define('personalidades', {
@@ -53,6 +58,14 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
     competencias: _sequelize2.default.TEXT
 });
 Profissoes.sync();
+
+var Usuario = exports.Usuario = sequelize.define('usuario', {
+    login: _sequelize2.default.STRING,
+    senha: _sequelize2.default.STRING,
+    email: _sequelize2.default.STRING
+});
+Alunos.hasOne(Usuario);
+Usuario.sync();
 
 var PerfisProfissionais = exports.PerfisProfissionais = sequelize.define('perfisProfissionais', {
     profissoes: _sequelize2.default.INTEGER,

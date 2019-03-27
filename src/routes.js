@@ -1,9 +1,17 @@
 import express from 'express';
+<<<<<<< HEAD
 import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades } from './models';
+=======
+import { Alunos, Profissoes, Materiais, Usuario } from './models';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { createSecretKey } from 'crypto';
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 
 let router = express.Router(); 
 
+<<<<<<< HEAD
 router.route('/alunos')
    /* .get((req,res)=>{
         Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
@@ -12,6 +20,9 @@ router.route('/alunos')
     })
      
     */
+=======
+router.route('/aluno')
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
     .get((req,res)=>{
         Alunos.findAll({attributes:[
             'nome',
@@ -54,8 +65,7 @@ router.route('/alunos')
 
     });
 
-
-router.route('/alunos/:aluno_id')
+router.route('/aluno/:aluno_id')
     .get((req,res)=>{
         Alunos.findById(req.params.aluno_id,{include: [ {
             model: Personalidades,
@@ -125,7 +135,7 @@ router.route('/alunos/:aluno_id')
     })
 
 
-router.route('/profissoes')
+router.route('/profissao')
     .get((req,res)=>{
         Profissoes.findAll().then(function(profissao){
             res.json(profissao)
@@ -175,7 +185,43 @@ router.route('/profissoes/:profissoes_id')
                 res.json({erro: 'profissão não encontrada'})
             }
         })
+    });
+
+    router.route('/usuario')
+    .get((req, res) => {
+        Usuario.findAll().then(function(usuario) {
+            res.send(usuario);
+        });
     })
+    .post(function (req, res) {
+        let login = req.body.login;
+        let email = req.body.email;
+        
+        bcrypt.hash(req.body.senha, 12).then((result) => {
+            Usuario.create({login:login, senha:result, 
+                email:email}).then((usuario) => {
+                    res.json({message:'Usuário adicionado'});
+                });
+            });
+    });
+
+router.route('/auth').post((req, res) => {
+    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
+        if(usuario) {
+            bcrypt.compare(req.body.senha,
+                usuario.senha).then((result) => {
+                    if (result) {  // Se a senha estiver correta;
+                        const token = jwt.sign(usuario.get({plain:true}), usuario.senha);
+                        res.json({message:'Usuário autenticado!', token:token})
+                    } else { //Se a senha estiver errada;
+                        res.json({message:'Usuário e/ou senha errados!'})
+                    }
+                })
+        } else {
+            res.json({message: 'Usuário não encontrado'})
+        }
+    })
+<<<<<<< HEAD
 router.route('/profissoes/:profissoes_id/trilha')
     .get((req, res)=>{
         let id = req.params.profissoes_id;
@@ -196,6 +242,21 @@ router.route('/profissoes/:profissoes_id/trilha')
             res.json({message: 'material adicionado na trilha'})
         })
     })
+=======
+});
+
+router.route('/perfil').get((req, res) => {
+    const token = req.headers['x-acess-token'];
+
+    if (token) {
+        jwt.verify(token, secret, (err, decoded) => {
+            res.json(decoded);
+        })
+    } else {
+        res.json({message:'Token não encontrado'})
+    }
+});
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 router.route('/materiais')
     .get((req, res)=>{
