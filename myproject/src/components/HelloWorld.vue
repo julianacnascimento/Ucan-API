@@ -1,5 +1,6 @@
 <template>
   <div class="hello">
+<<<<<<< HEAD
     <h1>{{ msg }}</h1>
     <h2>Essential Links</h2>
     <ul>
@@ -78,6 +79,13 @@
         >
           awesome-vue
         </a>
+=======
+    <h1><slot name="msg-site"> {{ msg }} </slot></h1>
+    <h2>Essential Links</h2>
+    <ul>
+      <li>
+        <router-link :to="{name: 'Login'}">Login</router-link>
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
       </li>
     </ul>
   </div>
@@ -88,7 +96,11 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+<<<<<<< HEAD
       msg: 'Welcome to Your Vue.js App'
+=======
+      msg: 'Bem vindo ao UCAN'
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
     }
   }
 }

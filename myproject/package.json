@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "myproject",
+=======
+  "name": "ucan",
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "",

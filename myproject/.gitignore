@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .DS_Store
 node_modules/
 /dist/
@@ -15,3 +16,8 @@ selenium-debug.log
 *.ntvs*
 *.njsproj
 *.sln
+=======
+node_modules/
+package-lock.json
+build/
+>>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
