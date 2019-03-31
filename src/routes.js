@@ -1,28 +1,12 @@
 import express from 'express';
-<<<<<<< HEAD
 import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades } from './models';
-=======
-import { Alunos, Profissoes, Materiais, Usuario } from './models';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { createSecretKey } from 'crypto';
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 
 let router = express.Router(); 
-
-<<<<<<< HEAD
 router.route('/alunos')
-   /* .get((req,res)=>{
-        Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
-            res.json(alunos);
-        })
-    })
-     
-    */
-=======
-router.route('/aluno')
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
     .get((req,res)=>{
         Alunos.findAll({attributes:[
             'nome',
@@ -79,7 +63,7 @@ router.route('/aluno/:aluno_id')
             ]
         }],
             where: {
-                alunosId: req.params.aluno_id 
+                alunosId: req.params.aluno_id
             },
             attributes:[
                 'nome',
@@ -96,6 +80,8 @@ router.route('/aluno/:aluno_id')
         });
     })
 
+    //futuramente pode ser interessante criar um update para alterar os atributos de Personalidade, pois o alunos pode querer
+    // refazer o questionário.
     .put((req,res)=>{
         Alunos.findById(req.params.aluno_id ).then((aluno)=>{
             if (aluno){
@@ -156,7 +142,10 @@ router.route('/profissoes/:profissoes_id')
     .get((req,res)=>{
         Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
             if(profissao){
-                res.json(profissao.getMateriais());
+                profissao.getMateriais().then((material)=>{
+                    res.json(material)
+                })
+               // res.json({profissao:profissao, materiais:profissao.getMateriais()});
             }else{
                 res.json({erro: 'profissao não encontrado'})
             }
@@ -186,6 +175,52 @@ router.route('/profissoes/:profissoes_id')
             }
         })
     });
+router.route('/profissoes/:profissao_id/trilha')
+    .get((req, res)=>{
+        Profissoes.findById(req.params.profissao_id).then((profissao)=>{
+            if(profissao){
+                profissao.getMateriais({
+                attributes:[
+                    'titulo',
+                    'descrição',
+                    'link'
+                ]}).then((materiais)=>{
+                    if(materiais){
+                        res.json(materiais);
+                    }else{
+                        res.json({message: 'materiais não encontrados'})
+                    }
+                })
+            }else{
+                res.json({message: 'profissão não encontrada'})
+            }
+           
+        })
+    })
+    
+    .post((req, res)=>{
+        const pontos = req.body.pontos;
+        const etapa = req.body.etapa;
+        const titulo = req.body.titulo;
+
+        Profissoes.findById(req.params.profissao_id).then((profissao)=>{
+            if(profissao){
+                Materiais.findOne({where:{titulo: titulo}}).then((material)=>{
+                    
+                    if(material){
+                        
+                        profissao.addMateriais(material,{through:{pontos:pontos, etapa:etapa} });
+                        res.json({message:'entrou'})
+                    }else{
+                        res.json({message:'material não encontrado'})
+                    }
+                })
+            }else{
+                res.json({message: 'profisão inexistente'})
+            }
+        })
+
+    })
 
     router.route('/usuario')
     .get((req, res) => {
@@ -221,42 +256,11 @@ router.route('/auth').post((req, res) => {
             res.json({message: 'Usuário não encontrado'})
         }
     })
-<<<<<<< HEAD
-router.route('/profissoes/:profissoes_id/trilha')
-    .get((req, res)=>{
-        let id = req.params.profissoes_id;
-        Materiais.findAll({include: [{model: MateriaisProfissoes, as: 'materiaisId'/*, where:{
-            profissoesId: id
-        }*/}]}).then(function(materiais){
-            res.json(materiais);
-        })
-    })
-    .post((req, res)=>{
-        const pontos = req.body.pontos;
-        const etapa = req.body.etapa;
-        const materiaisId = req.body.materiaisId;
-        const profissoesId = req.body.profissoesId;
+})
 
-        const data = {pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId};
-        MateriaisProfissoes.create(data).then((mt)=>{
-            res.json({message: 'material adicionado na trilha'})
-        })
-    })
-=======
-});
 
-router.route('/perfil').get((req, res) => {
-    const token = req.headers['x-acess-token'];
 
-    if (token) {
-        jwt.verify(token, secret, (err, decoded) => {
-            res.json(decoded);
-        })
-    } else {
-        res.json({message:'Token não encontrado'})
-    }
-});
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
+
 
 router.route('/materiais')
     .get((req, res)=>{
@@ -285,7 +289,7 @@ router.route('/materiais/:materiais_id')
     .get((req, res)=>{
         Materiais.findById(req.params.materiais_id).then((material)=>{
             if(material){
-                res.json(maerial);
+                res.json(material);
             }else{
                 res.json({erro:'profissão não encontrada'});
             }
@@ -316,6 +320,16 @@ router.route('/materiais/:materiais_id')
         })
     })
 
-
+router.route('/perfil').get((req, res) => {
+    const token = req.headers['x-acess-token'];
+    
+    if (token) {
+        jwt.verify(token, secret, (err, decoded) => {
+            res.json(decoded);
+        })
+    } else {
+        res.json({message:'Token não encontrado'})
+    }
+});
 
 export default router;
