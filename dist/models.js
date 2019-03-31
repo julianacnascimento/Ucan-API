@@ -24,11 +24,8 @@ var Alunos = exports.Alunos = sequelize.define('alunos', {
     matricula: _sequelize2.default.INTEGER,
     curso: _sequelize2.default.STRING
 });
-<<<<<<< HEAD
-=======
 
 Alunos.sync();
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 //aluno referencia Alunos
 var Personalidades = exports.Personalidades = sequelize.define('personalidades', {
@@ -90,7 +87,7 @@ var MateriaisProfissoes = exports.MateriaisProfissoes = sequelize.define('materi
     etapa: _sequelize2.default.INTEGER
 });
 
-Materiais.belongsToMany(Profissoes, { through: 'materiaisProfissoes', foreignKey: 'profissoesId' });
-Profissoes.belongsToMany(Materiais, { through: 'materiaisProfissoes', foreignKey: 'materiaisId' });
+Materiais.belongsToMany(Profissoes, { through: 'materiaisProfissoes', foreignKey: 'materiaisId' });
+Profissoes.belongsToMany(Materiais, { through: 'materiaisProfissoes', foreignKey: 'profissoesId' });
 //Materiais.hasMany(MateriaisProfissoes, {foreignKey: 'materiaisId', as: 'materiaisId'})
 MateriaisProfissoes.sync();
