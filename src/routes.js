@@ -181,12 +181,15 @@ router.route('/profissoes/:profissao_id/trilha')
             if(profissao){
                 profissao.getMateriais({
                 attributes:[
-                    'titulo',
-                    'descrição',
-                    'link'
-                ]}).then((materiais)=>{
+                    'titulo'
+                       
+                ]}
+                
+                ).then((materiais)=>{
                     if(materiais){
-                        res.json(materiais);
+                        res.json(materiais,{attributes:[
+                            'materiaisProfissoes.pontos'
+                        ]});
                     }else{
                         res.json({message: 'materiais não encontrados'})
                     }

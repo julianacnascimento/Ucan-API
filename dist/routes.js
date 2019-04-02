@@ -165,9 +165,9 @@ router.route('/profissoes/:profissao_id/trilha').get(function (req, res) {
     _models.Profissoes.findById(req.params.profissao_id).then(function (profissao) {
         if (profissao) {
             profissao.getMateriais({
-                attributes: ['titulo', 'descrição', 'link'] }).then(function (materiais) {
+                attributes: ['titulo'] }).then(function (materiais) {
                 if (materiais) {
-                    res.json(materiais);
+                    res.json(materiais, { attributes: ['materiaisProfissoes.pontos'] });
                 } else {
                     res.json({ message: 'materiais não encontrados' });
                 }
