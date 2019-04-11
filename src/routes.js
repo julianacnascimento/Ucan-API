@@ -1,28 +1,10 @@
 import express from 'express';
-<<<<<<< HEAD
-import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades } from './models';
-=======
-import { Alunos, Profissoes, Materiais, Usuario } from './models';
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import { createSecretKey } from 'crypto';
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
+import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades, Usuario } from './models';
 
 
 let router = express.Router(); 
 
-<<<<<<< HEAD
 router.route('/alunos')
-   /* .get((req,res)=>{
-        Alunos.findAll({include: [ {model: Personalidades}]}).then(function(alunos){
-            res.json(alunos);
-        })
-    })
-     
-    */
-=======
-router.route('/aluno')
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
     .get((req,res)=>{
         Alunos.findAll({attributes:[
             'nome',
@@ -35,21 +17,21 @@ router.route('/aluno')
     })
 
     .post((req,res)=>{
-       const nome = req.body.nome;
-       const matricula = req.body.matricula;
-       const faculdade = req.body.faculdade;
-       const curso = req.body.curso
-       const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso};
-       
-       const realista = req.body.realista;
-       const intelectual = req.body.intelectual;
-       const social = req.body.social;
-       const empreendedor = req.body.empreendedor;
-       const convencional= req.body.convencional;
-       const artistico = req.body.artistico;
+        const nome = req.body.nome;
+        const matricula = req.body.matricula;
+        const faculdade = req.body.faculdade;
+        const curso = req.body.curso
+        const data = {nome: nome, matricula: matricula, faculdade: faculdade, curso: curso};
 
-       Alunos.create(data).then((aluno)=>{
-           const data2 = {
+        const realista = req.body.realista;
+        const intelectual = req.body.intelectual;
+        const social = req.body.social;
+        const empreendedor = req.body.empreendedor;
+        const convencional= req.body.convencional;
+        const artistico = req.body.artistico;
+
+        Alunos.create(data).then((aluno)=>{
+            const data2 = {
                 alunosId: aluno.id,
                 realista:realista, 
                 intelectual:intelectual, 
@@ -59,9 +41,9 @@ router.route('/aluno')
             }
         Personalidades.create(data2).then((personalidade)=>{
             res.json({message: 'Aluno adicionado'})
-         }) 
+        }) 
 
-       })
+        })
 
     });
 
@@ -221,7 +203,6 @@ router.route('/auth').post((req, res) => {
             res.json({message: 'Usuário não encontrado'})
         }
     })
-<<<<<<< HEAD
 router.route('/profissoes/:profissoes_id/trilha')
     .get((req, res)=>{
         let id = req.params.profissoes_id;
@@ -242,21 +223,6 @@ router.route('/profissoes/:profissoes_id/trilha')
             res.json({message: 'material adicionado na trilha'})
         })
     })
-=======
-});
-
-router.route('/perfil').get((req, res) => {
-    const token = req.headers['x-acess-token'];
-
-    if (token) {
-        jwt.verify(token, secret, (err, decoded) => {
-            res.json(decoded);
-        })
-    } else {
-        res.json({message:'Token não encontrado'})
-    }
-});
->>>>>>> d2d2d3fc20e8cdffecf98bcd429f163e43bbf0c9
 
 router.route('/materiais')
     .get((req, res)=>{
@@ -315,7 +281,6 @@ router.route('/materiais/:materiais_id')
             }
         })
     })
+}
 
-
-
-export default router;
+export default router
