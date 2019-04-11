@@ -35,11 +35,6 @@ var Personalidades = exports.Personalidades = sequelize.define('personalidades',
     artistico: _sequelize2.default.INTEGER
 });
 
-Alunos.sync();
-
-Alunos.hasOne(Personalidades, { foreignKey: 'alunosId' });
-
-Personalidades.sync();
 //Profissões de interesse do aluno 
 var ProfissoesInteresse = exports.ProfissoesInteresse = sequelize.define('profissoesInteresse', {
     aluno: _sequelize2.default.INTEGER,
@@ -52,15 +47,12 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
     descrição: _sequelize2.default.TEXT,
     competencias: _sequelize2.default.TEXT
 });
-Profissoes.sync();
 
 var Usuario = exports.Usuario = sequelize.define('usuario', {
     login: _sequelize2.default.STRING,
     senha: _sequelize2.default.STRING,
     email: _sequelize2.default.STRING
 });
-Alunos.hasOne(Usuario);
-Usuario.sync();
 
 var PerfisProfissionais = exports.PerfisProfissionais = sequelize.define('perfisProfissionais', {
     profissoes: _sequelize2.default.INTEGER,
@@ -71,19 +63,31 @@ var PerfisProfissionais = exports.PerfisProfissionais = sequelize.define('perfis
     convencional: _sequelize2.default.INTEGER,
     artistico: _sequelize2.default.INTEGER
 });
-PerfisProfissionais.sync();
 
 var Materiais = exports.Materiais = sequelize.define('materiais', {
     titulo: _sequelize2.default.STRING,
     descrição: _sequelize2.default.TEXT,
     link: _sequelize2.default.STRING
 });
-Materiais.sync();
 
 var MateriaisProfissoes = exports.MateriaisProfissoes = sequelize.define('materiaisProfissoes', {
     pontos: _sequelize2.default.INTEGER,
     etapa: _sequelize2.default.INTEGER
 });
+
+Alunos.sync();
+Alunos.hasOne(Personalidades, { foreignKey: 'alunosId' });
+
+Personalidades.sync();
+
+Profissoes.sync();
+
+Alunos.hasOne(Usuario);
+Usuario.sync();
+
+PerfisProfissionais.sync();
+
+Materiais.sync();
 
 Materiais.belongsToMany(Profissoes, { through: 'materiaisProfissoes', foreignKey: 'profissoesId' });
 Profissoes.belongsToMany(Materiais, { through: 'materiaisProfissoes', foreignKey: 'materiaisId' });

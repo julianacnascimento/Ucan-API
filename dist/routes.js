@@ -10,6 +10,14 @@ var _express2 = _interopRequireDefault(_express);
 
 var _models = require('./models');
 
+var _bcrypt = require('bcrypt');
+
+var _bcrypt2 = _interopRequireDefault(_bcrypt);
+
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = _express2.default.Router();
@@ -147,6 +155,73 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
     });
 });
 
+router.route('/profissoes/:profissoes_id/trilha').get(function (req, res) {
+    var id = req.params.profissoes_id;
+    _models.Materiais.findAll({ include: [{ model: _models.MateriaisProfissoes, as: 'materiaisId' /*, where:{
+                                                                                                  profissoesId: id
+                                                                                                  }*/ }] }).then(function (materiais) {
+        res.json(materiais);
+    });
+}).post(function (req, res) {
+    var pontos = req.body.pontos;
+    var etapa = req.body.etapa;
+    var materiaisId = req.body.materiaisId;
+    var profissoesId = req.body.profissoesId;
+
+    var data = { pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId };
+    _models.MateriaisProfissoes.create(data).then(function (mt) {
+        res.json({ message: 'material adicionado na trilha' });
+    });
+});
+
+router.route('/materiais').get(function (req, res) {
+    _models.Materiais.findAll({
+        attributes: ['titulo', 'descrição', 'link']
+    }).then(function (materiais) {
+        res.json(materiais);
+    });
+}).post(function (req, res) {
+    var titulo = req.body.titulo;
+    var descrição = req.body.descrição;
+    var link = req.body.link;
+
+    var data = { titulo: titulo, descrição: descrição, link: link };
+
+    _models.Materiais.create(data).then(function (material) {
+        res.json({ message: 'material cadastrado com sucesso!' });
+    });
+});
+router.route('/materiais/:materiais_id').get(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            res.json(maerial);
+        } else {
+            res.json({ erro: 'profissão não encontrada' });
+        }
+    });
+}).put(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            material.update({
+                titulo: req.body.titulo,
+                descrição: req.body.descrição,
+                link: req.body.link
+            });
+            res.json({ message: 'dados adicionados com sucesso' });
+        } else {
+            res.json({ erro: 'material não encontrado' });
+        }
+    });
+}).delete(function (req, res) {
+    _models.Materiais.findById(req.params.materiais_id).then(function (material) {
+        if (material) {
+            material.destroy();
+            res.json({ message: 'material deletado com sucesso!' });
+        } else {
+            res.json({ error: 'material não encontrado' });
+        }
+    });
+});
 router.route('/usuario').get(function (req, res) {
     _models.Usuario.findAll().then(function (usuario) {
         res.send(usuario);
@@ -155,7 +230,7 @@ router.route('/usuario').get(function (req, res) {
     var login = req.body.login;
     var email = req.body.email;
 
-    bcrypt.hash(req.body.senha, 12).then(function (result) {
+    _bcrypt2.default.hash(req.body.senha, 12).then(function (result) {
         _models.Usuario.create({ login: login, senha: result,
             email: email }).then(function (usuario) {
             res.json({ message: 'Usuário adicionado' });
@@ -166,10 +241,10 @@ router.route('/usuario').get(function (req, res) {
 router.route('/auth').post(function (req, res) {
     _models.Usuario.findOne({ where: { login: req.body.login } }).then(function (usuario) {
         if (usuario) {
-            bcrypt.compare(req.body.senha, usuario.senha).then(function (result) {
+            _bcrypt2.default.compare(req.body.senha, usuario.senha).then(function (result) {
                 if (result) {
                     // Se a senha estiver correta;
-                    var token = jwt.sign(usuario.get({ plain: true }), usuario.senha);
+                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), usuario.senha);
                     res.json({ message: 'Usuário autenticado!', token: token });
                 } else {
                     //Se a senha estiver errada;
@@ -180,72 +255,16 @@ router.route('/auth').post(function (req, res) {
             res.json({ message: 'Usuário não encontrado' });
         }
     });
-    router.route('/profissoes/:profissoes_id/trilha').get(function (req, res) {
-        var id = req.params.profissoes_id;
-        _models.Materiais.findAll({ include: [{ model: _models.MateriaisProfissoes, as: 'materiaisId' /*, where:{
-                                                                                                      profissoesId: id
-                                                                                                      }*/ }] }).then(function (materiais) {
-            res.json(materiais);
-        });
-    }).post(function (req, res) {
-        var pontos = req.body.pontos;
-        var etapa = req.body.etapa;
-        var materiaisId = req.body.materiaisId;
-        var profissoesId = req.body.profissoesId;
+    router.route('/perfil').get(function (req, res) {
+        var token = req.headers['x-acess-token'];
 
-        var data = { pontos: pontos, etapa: etapa, materiaisId: materiaisId, profissoesId: profissoesId };
-        _models.MateriaisProfissoes.create(data).then(function (mt) {
-            res.json({ message: 'material adicionado na trilha' });
-        });
-    });
-
-    router.route('/materiais').get(function (req, res) {
-        _models.Materiais.findAll({
-            attributes: ['titulo', 'descrição', 'link']
-        }).then(function (materiais) {
-            res.json(materiais);
-        });
-    }).post(function (req, res) {
-        var titulo = req.body.titulo;
-        var descrição = req.body.descrição;
-        var link = req.body.link;
-
-        var data = { titulo: titulo, descrição: descrição, link: link };
-
-        _models.Materiais.create(data).then(function (material) {
-            res.json({ message: 'material cadastrado com sucesso!' });
-        });
-    });
-    router.route('/materiais/:materiais_id').get(function (req, res) {
-        _models.Materiais.findById(req.params.materiais_id).then(function (material) {
-            if (material) {
-                res.json(maerial);
-            } else {
-                res.json({ erro: 'profissão não encontrada' });
-            }
-        });
-    }).put(function (req, res) {
-        _models.Materiais.findById(req.params.materiais_id).then(function (material) {
-            if (material) {
-                material.update({
-                    titulo: req.body.titulo,
-                    descrição: req.body.descrição,
-                    link: req.body.link
-                });
-                res.json({ message: 'dados adicionados com sucesso' });
-            } else {
-                res.json({ erro: 'material não encontrado' });
-            }
-        });
-    }).delete(function (req, res) {
-        _models.Materiais.findById(req.params.materiais_id).then(function (material) {
-            if (material) {
-                material.destroy();
-                res.json({ message: 'material deletado com sucesso!' });
-            } else {
-                res.json({ error: 'material não encontrado' });
-            }
-        });
+        if (token) {
+            _jsonwebtoken2.default.verify(token, secret, function (err, decoded) {
+                res.json(decoded);
+            });
+        } else {
+            res.json({ message: 'Token não encontrado' });
+        }
     });
 });
 

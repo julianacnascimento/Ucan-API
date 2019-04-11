@@ -1,5 +1,7 @@
 import express from 'express';
 import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades, Usuario } from './models';
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 
 let router = express.Router(); 
@@ -170,40 +172,8 @@ router.route('/profissoes/:profissoes_id')
         })
     });
 
-    router.route('/usuario')
-    .get((req, res) => {
-        Usuario.findAll().then(function(usuario) {
-            res.send(usuario);
-        });
-    })
-    .post(function (req, res) {
-        let login = req.body.login;
-        let email = req.body.email;
-        
-        bcrypt.hash(req.body.senha, 12).then((result) => {
-            Usuario.create({login:login, senha:result, 
-                email:email}).then((usuario) => {
-                    res.json({message:'Usuário adicionado'});
-                });
-            });
-    });
-
-router.route('/auth').post((req, res) => {
-    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
-        if(usuario) {
-            bcrypt.compare(req.body.senha,
-                usuario.senha).then((result) => {
-                    if (result) {  // Se a senha estiver correta;
-                        const token = jwt.sign(usuario.get({plain:true}), usuario.senha);
-                        res.json({message:'Usuário autenticado!', token:token})
-                    } else { //Se a senha estiver errada;
-                        res.json({message:'Usuário e/ou senha errados!'})
-                    }
-                })
-        } else {
-            res.json({message: 'Usuário não encontrado'})
-        }
-    })
+    
+    
 router.route('/profissoes/:profissoes_id/trilha')
     .get((req, res)=>{
         let id = req.params.profissoes_id;
@@ -282,6 +252,51 @@ router.route('/materiais/:materiais_id')
             }
         })
     })
+    router.route('/usuario')
+    .get((req, res) => {
+        Usuario.findAll().then(function(usuario) {
+            res.send(usuario);
+        });
+    })
+    .post(function (req, res) {
+        let login = req.body.login;
+        let email = req.body.email;
+        
+        bcrypt.hash(req.body.senha, 12).then((result) => {
+            Usuario.create({login:login, senha:result, 
+                email:email}).then((usuario) => {
+                    res.json({message:'Usuário adicionado'});
+                });
+            });
+    });
+
+router.route('/auth').post((req, res) => {
+    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
+        if(usuario) {
+            bcrypt.compare(req.body.senha,
+                usuario.senha).then((result) => {
+                    if (result) {  // Se a senha estiver correta;
+                        const token = jwt.sign(usuario.get({plain:true}), usuario.senha);
+                        res.json({message:'Usuário autenticado!', token:token})
+                    } else { //Se a senha estiver errada;
+                        res.json({message:'Usuário e/ou senha errados!'})
+                    }
+                })
+        } else {
+            res.json({message: 'Usuário não encontrado'})
+        }
+    });
+    router.route('/perfil').get((req, res) => {
+        const token = req.headers['x-acess-token'];
+    
+        if (token) {
+            jwt.verify(token, secret, (err, decoded) => {
+                res.json(decoded);
+            })
+        } else {
+            res.json({message:'Token não encontrado'})
+        }
+    });
 });
 
 export default router;

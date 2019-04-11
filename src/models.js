@@ -14,7 +14,6 @@ export let Alunos = sequelize.define('alunos',{
     curso: Sequelize.STRING
 });
 
-
 //aluno referencia Alunos
 export let Personalidades= sequelize.define('personalidades', {
     realista:Sequelize.INTEGER,
@@ -23,36 +22,26 @@ export let Personalidades= sequelize.define('personalidades', {
     empreendedor: Sequelize.INTEGER,
     convencional: Sequelize.INTEGER,
     artistico: Sequelize.INTEGER
-})
+});
 
-Alunos.sync();
-
-Alunos.hasOne(Personalidades, {foreignKey: 'alunosId'});
-
-
-
-Personalidades.sync();
 //Profissões de interesse do aluno 
 export let ProfissoesInteresse = sequelize.define('profissoesInteresse',{
     aluno: Sequelize.INTEGER,
     profissao: Sequelize.INTEGER
     
-})
+});
 
 export let Profissoes = sequelize.define('profissoes',{
     nome: Sequelize.STRING,
     descrição: Sequelize.TEXT,
     competencias: Sequelize.TEXT
-})
-Profissoes.sync();
+});
 
 export let Usuario  = sequelize.define('usuario', {
     login: Sequelize.STRING,
     senha: Sequelize.STRING,
     email: Sequelize.STRING
 });
-Alunos.hasOne(Usuario);
-Usuario.sync();
 
 export let PerfisProfissionais = sequelize.define('perfisProfissionais',{
     profissoes:Sequelize.INTEGER,
@@ -62,20 +51,34 @@ export let PerfisProfissionais = sequelize.define('perfisProfissionais',{
     empreendedor: Sequelize.INTEGER,
     convencional: Sequelize.INTEGER,
     artistico: Sequelize.INTEGER
-})
-PerfisProfissionais.sync();
+});
+
 
 export let Materiais = sequelize.define('materiais',{
     titulo: Sequelize.STRING,
     descrição: Sequelize.TEXT,
     link: Sequelize.STRING
-})
-Materiais.sync();
+});
+
 
 export let MateriaisProfissoes = sequelize.define('materiaisProfissoes',{
     pontos: Sequelize.INTEGER,
     etapa: Sequelize.INTEGER
-})
+});
+
+Alunos.sync();
+Alunos.hasOne(Personalidades, {foreignKey: 'alunosId'});
+
+Personalidades.sync();
+
+Profissoes.sync();
+
+Alunos.hasOne(Usuario);
+Usuario.sync();
+
+PerfisProfissionais.sync();
+
+Materiais.sync();
 
 Materiais.belongsToMany(Profissoes, {through:'materiaisProfissoes', foreignKey:'profissoesId'});
 Profissoes.belongsToMany(Materiais, {through: 'materiaisProfissoes', foreignKey: 'materiaisId'});
