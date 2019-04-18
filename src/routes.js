@@ -259,11 +259,11 @@ router.route('/materiais/:materiais_id')
         });
     })
     .post(function (req, res) {
-        let login = req.body.login;
+        let nome = req.body.nome;
         let email = req.body.email;
         
         bcrypt.hash(req.body.senha, 12).then((result) => {
-            Usuario.create({login:login, senha:result, 
+            Usuario.create({nome:nome, senha:result, 
                 email:email}).then((usuario) => {
                     res.json({message:'Usuário adicionado'});
                 });
@@ -271,7 +271,7 @@ router.route('/materiais/:materiais_id')
     });
 
 router.route('/auth').post((req, res) => {
-    Usuario.findOne({where: {login:req.body.login}}).then((usuario) => {
+    Usuario.findOne({where: {email:req.body.email}}).then((usuario) => {
         if(usuario) {
             bcrypt.compare(req.body.senha,
                 usuario.senha).then((result) => {

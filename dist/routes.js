@@ -227,11 +227,11 @@ router.route('/usuario').get(function (req, res) {
         res.send(usuario);
     });
 }).post(function (req, res) {
-    var login = req.body.login;
+    var nome = req.body.nome;
     var email = req.body.email;
 
     _bcrypt2.default.hash(req.body.senha, 12).then(function (result) {
-        _models.Usuario.create({ login: login, senha: result,
+        _models.Usuario.create({ nome: nome, senha: result,
             email: email }).then(function (usuario) {
             res.json({ message: 'Usuário adicionado' });
         });
@@ -239,7 +239,7 @@ router.route('/usuario').get(function (req, res) {
 });
 
 router.route('/auth').post(function (req, res) {
-    _models.Usuario.findOne({ where: { login: req.body.login } }).then(function (usuario) {
+    _models.Usuario.findOne({ where: { email: req.body.email } }).then(function (usuario) {
         if (usuario) {
             _bcrypt2.default.compare(req.body.senha, usuario.senha).then(function (result) {
                 if (result) {

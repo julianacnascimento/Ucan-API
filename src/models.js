@@ -38,7 +38,7 @@ export let Profissoes = sequelize.define('profissoes',{
 });
 
 export let Usuario  = sequelize.define('usuario', {
-    login: Sequelize.STRING,
+    nome: Sequelize.STRING,
     senha: Sequelize.STRING,
     email: Sequelize.STRING
 });

@@ -12,14 +12,20 @@ var _routes = require('./routes');
 
 var _routes2 = _interopRequireDefault(_routes);
 
+var _cors = require('cors');
+
+var _cors2 = _interopRequireDefault(_cors);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
 app.use(_bodyParser2.default.json());
 
+app.use((0, _cors2.default)());
+
 app.use('/', _routes2.default);
 
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+  console.log('App listening on port 3000!');
 });

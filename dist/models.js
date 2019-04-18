@@ -49,7 +49,7 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 });
 
 var Usuario = exports.Usuario = sequelize.define('usuario', {
-    login: _sequelize2.default.STRING,
+    nome: _sequelize2.default.STRING,
     senha: _sequelize2.default.STRING,
     email: _sequelize2.default.STRING
 });
