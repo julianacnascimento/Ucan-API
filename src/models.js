@@ -43,6 +43,12 @@ export let Usuario  = sequelize.define('usuario', {
     email: Sequelize.STRING
 });
 
+export let Admin = sequelize.define ('admin', {
+    nome: Sequelize.STRING,
+    senha: Sequelize.STRING,
+    email: Sequelize.STRING
+});
+
 export let PerfisProfissionais = sequelize.define('perfisProfissionais',{
     profissoes:Sequelize.INTEGER,
     realista:Sequelize.INTEGER,
@@ -74,7 +80,10 @@ Personalidades.sync();
 Profissoes.sync();
 
 Alunos.hasOne(Usuario);
+
 Usuario.sync();
+
+Admin.sync();
 
 PerfisProfissionais.sync();
 

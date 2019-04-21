@@ -1,5 +1,5 @@
 import express from 'express';
-import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades, Usuario } from './models';
+import { Alunos, Profissoes, Materiais, MateriaisProfissoes, Personalidades, Usuario, Admin } from './models';
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -252,7 +252,8 @@ router.route('/materiais/:materiais_id')
             }
         })
     })
-    router.route('/usuario')
+    
+router.route('/usuario')
     .get((req, res) => {
         Usuario.findAll().then(function(usuario) {
             res.send(usuario);
@@ -268,7 +269,44 @@ router.route('/materiais/:materiais_id')
                     res.json({message:'Usuário adicionado'});
                 });
             });
-    });
+    })
+
+router.route('/usuario/:usuarioId')
+    .get((req, res) => {
+        Usuario.findById(req.params.usuarioId)
+        .then(usuario =>{
+            if(usuario){
+                res.json(usuario);
+            } else {
+                res.json({error: 'Usuário não encontrado!'});
+            }
+        })
+    })
+    .put((req, res) => {
+        Usuario.findById(req.params.usuarioId)
+        .then(usuario =>{
+            if(usuario){
+                usuario.update({nome: req.body.nome,
+                senha: req.body.senha}).then(() =>{
+                    res.json(usuario);
+                })                
+            } else {
+                res.json({error: 'Usuário não encontrado!'});
+            }
+        })
+    })
+    .delete((req, res) => {
+        Usuario.findById(req.params.usuarioId)
+        .then(usuario =>{
+            if(usuario){
+                usuario.destroy().then((usuario) =>{
+                    res.json({message: 'Usuário deletado!'});
+                })                
+            } else {
+                res.json({error: 'Usuário não encontrado!'});
+            }
+        })
+    })    
 
 router.route('/auth').post((req, res) => {
     Usuario.findOne({where: {email:req.body.email}}).then((usuario) => {
@@ -276,7 +314,7 @@ router.route('/auth').post((req, res) => {
             bcrypt.compare(req.body.senha,
                 usuario.senha).then((result) => {
                     if (result) {  // Se a senha estiver correta;
-                        const token = jwt.sign(usuario.get({plain:true}), usuario.senha);
+                        const token = jwt.sign(usuario.get({plain:true}), "mudar");
                         res.json({message:'Usuário autenticado!', token:token})
                     } else { //Se a senha estiver errada;
                         res.json({message:'Usuário e/ou senha errados!'})
@@ -285,18 +323,67 @@ router.route('/auth').post((req, res) => {
         } else {
             res.json({message: 'Usuário não encontrado'})
         }
-    });
-    router.route('/perfil').get((req, res) => {
-        const token = req.headers['x-acess-token'];
+    })
+});
+
+router.route('/perfil').get((req, res) => {
+        const token = req.headers['x-access-token'];
     
         if (token) {
-            jwt.verify(token, secret, (err, decoded) => {
+            jwt.verify(token, "mudar", (err, decoded) => {
                 res.json(decoded);
-            })
+            });
         } else {
             res.json({message:'Token não encontrado'})
         }
     });
+
+router.route('/admin')
+    .get((req,res) => {
+        Admin.findAll().then(function(admin) {
+            res.send(admin);
+        });
+    })
+    .post(function (req, res) {
+        let nome = req.body.nome;
+        let email = req.body.email;
+
+        bcrypt.hash(req.body.senha, 12).then((result) => {
+            Admin.create({nome:nome, senha:result, 
+                email:email}).then((admin) => {
+                    res.json({message:'Administrador cadastrado!'});
+                });
+            });
+    });
+
+router.route('/auth.admin').post((req, res) => {
+        Admin.findOne({where: {email:req.body.email}}).then((admin) => {
+            if(admin) {
+                bcrypt.compare(req.body.senha,
+                    admin.senha).then((result) => {
+                        if (result) {  // Se a senha estiver correta;
+                            const token = jwt.sign(admin.get({plain:true}), "mudar_admin");
+                            res.json({message:'Admin autenticado!', token:token})
+                        } else { //Se a senha estiver errada;
+                            res.json({message:'EMAIL e/ou senha não combinam!'})
+                        }
+                    })
+            } else {
+                res.json({message: 'email e/ou senha não combinam!'})
+            }
+        })
+    });
+
+router.route('/perfil.admin').get((req, res) => {
+    const token = req.headers['x-access-token'];
+    
+    if (token) {
+        jwt.verify(token, "mudar_admin", (err, decoded) => {
+            res.json(decoded);
+        });
+    } else {
+        res.json({message:'Token não encontrado'})
+    }
 });
 
 export default router;

@@ -222,6 +222,7 @@ router.route('/materiais/:materiais_id').get(function (req, res) {
         }
     });
 });
+
 router.route('/usuario').get(function (req, res) {
     _models.Usuario.findAll().then(function (usuario) {
         res.send(usuario);
@@ -238,13 +239,44 @@ router.route('/usuario').get(function (req, res) {
     });
 });
 
+router.route('/usuario/:usuarioId').get(function (req, res) {
+    _models.Usuario.findById(req.params.usuarioId).then(function (usuario) {
+        if (usuario) {
+            res.json(usuario);
+        } else {
+            res.json({ error: 'Usuário não encontrado!' });
+        }
+    });
+}).put(function (req, res) {
+    _models.Usuario.findById(req.params.usuarioId).then(function (usuario) {
+        if (usuario) {
+            usuario.update({ nome: req.body.nome,
+                senha: req.body.senha }).then(function () {
+                res.json(usuario);
+            });
+        } else {
+            res.json({ error: 'Usuário não encontrado!' });
+        }
+    });
+}).delete(function (req, res) {
+    _models.Usuario.findById(req.params.usuarioId).then(function (usuario) {
+        if (usuario) {
+            usuario.destroy().then(function (usuario) {
+                res.json({ message: 'Usuário deletado!' });
+            });
+        } else {
+            res.json({ error: 'Usuário não encontrado!' });
+        }
+    });
+});
+
 router.route('/auth').post(function (req, res) {
     _models.Usuario.findOne({ where: { email: req.body.email } }).then(function (usuario) {
         if (usuario) {
             _bcrypt2.default.compare(req.body.senha, usuario.senha).then(function (result) {
                 if (result) {
                     // Se a senha estiver correta;
-                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), usuario.senha);
+                    var token = _jsonwebtoken2.default.sign(usuario.get({ plain: true }), "mudar");
                     res.json({ message: 'Usuário autenticado!', token: token });
                 } else {
                     //Se a senha estiver errada;
@@ -255,17 +287,65 @@ router.route('/auth').post(function (req, res) {
             res.json({ message: 'Usuário não encontrado' });
         }
     });
-    router.route('/perfil').get(function (req, res) {
-        var token = req.headers['x-acess-token'];
+});
 
-        if (token) {
-            _jsonwebtoken2.default.verify(token, secret, function (err, decoded) {
-                res.json(decoded);
+router.route('/perfil').get(function (req, res) {
+    var token = req.headers['x-access-token'];
+
+    if (token) {
+        _jsonwebtoken2.default.verify(token, "mudar", function (err, decoded) {
+            res.json(decoded);
+        });
+    } else {
+        res.json({ message: 'Token não encontrado' });
+    }
+});
+
+router.route('/admin').get(function (req, res) {
+    _models.Admin.findAll().then(function (admin) {
+        res.send(admin);
+    });
+}).post(function (req, res) {
+    var nome = req.body.nome;
+    var email = req.body.email;
+
+    _bcrypt2.default.hash(req.body.senha, 12).then(function (result) {
+        _models.Admin.create({ nome: nome, senha: result,
+            email: email }).then(function (admin) {
+            res.json({ message: 'Administrador cadastrado!' });
+        });
+    });
+});
+
+router.route('/auth.admin').post(function (req, res) {
+    _models.Admin.findOne({ where: { email: req.body.email } }).then(function (admin) {
+        if (admin) {
+            _bcrypt2.default.compare(req.body.senha, admin.senha).then(function (result) {
+                if (result) {
+                    // Se a senha estiver correta;
+                    var token = _jsonwebtoken2.default.sign(admin.get({ plain: true }), "mudar_admin");
+                    res.json({ message: 'Admin autenticado!', token: token });
+                } else {
+                    //Se a senha estiver errada;
+                    res.json({ message: 'EMAIL e/ou senha não combinam!' });
+                }
             });
         } else {
-            res.json({ message: 'Token não encontrado' });
+            res.json({ message: 'email e/ou senha não combinam!' });
         }
     });
+});
+
+router.route('/perfil.admin').get(function (req, res) {
+    var token = req.headers['x-access-token'];
+
+    if (token) {
+        _jsonwebtoken2.default.verify(token, "mudar_admin", function (err, decoded) {
+            res.json(decoded);
+        });
+    } else {
+        res.json({ message: 'Token não encontrado' });
+    }
 });
 
 exports.default = router;
