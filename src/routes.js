@@ -362,23 +362,23 @@ router.route('/auth.admin').post((req, res) => {
                 bcrypt.compare(req.body.senha,
                     admin.senha).then((result) => {
                         if (result) {  // Se a senha estiver correta;
-                            const token = jwt.sign(admin.get({plain:true}), "mudar_admin");
-                            res.json({message:'Admin autenticado!', token:token})
+                            const tokenAdmin = jwt.sign(admin.get({plain:true}), "mudar");
+                            res.json({message:'Admin autenticado!', token:tokenAdmin})
                         } else { //Se a senha estiver errada;
                             res.json({message:'EMAIL e/ou senha não combinam!'})
                         }
                     })
             } else {
-                res.json({message: 'email e/ou senha não combinam!'})
+                res.json({message: 'email e/ou SENHA não combinam!'})
             }
         })
     });
 
 router.route('/perfil.admin').get((req, res) => {
-    const token = req.headers['x-access-token'];
+    const tokenAdmin = req.headers['x-acess-token'];
     
-    if (token) {
-        jwt.verify(token, "mudar_admin", (err, decoded) => {
+    if (tokenAdmin) {
+        jwt.verify(tokenAdmin, "mudar", (err, decoded) => {
             res.json(decoded);
         });
     } else {

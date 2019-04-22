@@ -323,24 +323,24 @@ router.route('/auth.admin').post(function (req, res) {
             _bcrypt2.default.compare(req.body.senha, admin.senha).then(function (result) {
                 if (result) {
                     // Se a senha estiver correta;
-                    var token = _jsonwebtoken2.default.sign(admin.get({ plain: true }), "mudar_admin");
-                    res.json({ message: 'Admin autenticado!', token: token });
+                    var tokenAdmin = _jsonwebtoken2.default.sign(admin.get({ plain: true }), "mudar");
+                    res.json({ message: 'Admin autenticado!', token: tokenAdmin });
                 } else {
                     //Se a senha estiver errada;
                     res.json({ message: 'EMAIL e/ou senha não combinam!' });
                 }
             });
         } else {
-            res.json({ message: 'email e/ou senha não combinam!' });
+            res.json({ message: 'email e/ou SENHA não combinam!' });
         }
     });
 });
 
 router.route('/perfil.admin').get(function (req, res) {
-    var token = req.headers['x-access-token'];
+    var tokenAdmin = req.headers['x-acess-token'];
 
-    if (token) {
-        _jsonwebtoken2.default.verify(token, "mudar_admin", function (err, decoded) {
+    if (tokenAdmin) {
+        _jsonwebtoken2.default.verify(tokenAdmin, "mudar", function (err, decoded) {
             res.json(decoded);
         });
     } else {
