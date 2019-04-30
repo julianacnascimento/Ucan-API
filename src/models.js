@@ -38,7 +38,13 @@ export let Profissoes = sequelize.define('profissoes',{
 });
 
 export let Usuario  = sequelize.define('usuario', {
-    login: Sequelize.STRING,
+    nome: Sequelize.STRING,
+    senha: Sequelize.STRING,
+    email: Sequelize.STRING
+});
+
+export let Admin = sequelize.define ('admin', {
+    nome: Sequelize.STRING,
     senha: Sequelize.STRING,
     email: Sequelize.STRING
 });
@@ -74,7 +80,10 @@ Personalidades.sync();
 Profissoes.sync();
 
 Alunos.hasOne(Usuario);
+
 Usuario.sync();
+
+Admin.sync();
 
 PerfisProfissionais.sync();
 
