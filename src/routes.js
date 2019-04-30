@@ -329,7 +329,7 @@ router.route('/auth').post((req, res) => {
 router.route('/perfil').get((req, res) => {
         const token = req.headers['x-access-token'];
     
-        if (token) {
+        if (token) { 
             jwt.verify(token, "mudar", (err, decoded) => {
                 res.json(decoded);
             });
