@@ -253,7 +253,7 @@ router.route('/usuario/:usuarioId').get(function (req, res) {
     _models.Usuario.findById(req.params.usuarioId).then(function (usuario) {
         if (usuario) {
             usuario.update({ nome: req.body.nome,
-                senha: req.body.senha }).then(function () {
+                email: req.body.email }).then(function () {
                 res.json(usuario);
             });
         } else {

@@ -288,7 +288,7 @@ router.route('/usuario/:usuarioId')
         .then(usuario =>{
             if(usuario){
                 usuario.update({nome: req.body.nome,
-                senha: req.body.senha}).then(() =>{
+                email: req.body.email}).then(() =>{
                     res.json(usuario);
                 })                
             } else {
