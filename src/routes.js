@@ -157,7 +157,7 @@ router.route('/profissoes/:profissoes_id')
                 })
                 res.json({message:'dados atualizados com sucesso'});
             }else{
-                res.json({erro: 'profissao não encontrada'})
+                res.json({erro: 'profissão não encontrada'})
             }
         })
     })

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Admin = exports.Usuario = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
+exports.MateriaisProfissoes = exports.Materiais = exports.PerfisProfissionais = exports.Usuario = exports.Profissoes = exports.ProfissoesInteresse = exports.Personalidades = exports.Alunos = undefined;
 
 var _sequelize = require('sequelize');
 
@@ -49,13 +49,7 @@ var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
 });
 
 var Usuario = exports.Usuario = sequelize.define('usuario', {
-    nome: _sequelize2.default.STRING,
-    senha: _sequelize2.default.STRING,
-    email: _sequelize2.default.STRING
-});
-
-var Admin = exports.Admin = sequelize.define('admin', {
-    nome: _sequelize2.default.STRING,
+    login: _sequelize2.default.STRING,
     senha: _sequelize2.default.STRING,
     email: _sequelize2.default.STRING
 });
@@ -89,10 +83,7 @@ Personalidades.sync();
 Profissoes.sync();
 
 Alunos.hasOne(Usuario);
-
 Usuario.sync();
-
-Admin.sync();
 
 PerfisProfissionais.sync();
 
