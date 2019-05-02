@@ -46,7 +46,8 @@ router.route('/alunos').get(function (req, res) {
             alunosId: aluno.id,
             realista: realista,
             intelectual: intelectual,
-            social: social, empreendedor: empreendedor,
+            social: social,
+            empreendedor: empreendedor,
             convencional: convencional,
             artistico: artistico
         };
@@ -109,34 +110,34 @@ router.route('/aluno/:aluno_id').get(function (req, res) {
 });
 
 router.route('/profissao').get(function (req, res) {
-    _models.Profissoes.findAll().then(function (profissao) {
-        res.json(profissao);
+    _models.Profissoes.findAll().then(function (profissoes) {
+        res.json(profissoes);
     });
 }).post(function (req, res) {
     var nome = req.body.nome;
-    var descrição = req.body.descrição;
+    var descricao = req.body.descricao;
     var competencias = req.body.competencias;
-    var data = { nome: nome, descrição: descrição, competencias: competencias };
+    var data = { nome: nome, descricao: descricao, competencias: competencias };
 
-    _models.Profissoes.create(data).then(function (profissao) {
+    _models.Profissoes.create(data).then(function (profissoes) {
         res.json({ message: 'Profissão adicionada' });
     });
 });
 
-router.route('/profissoes/:profissoes_id').get(function (req, res) {
-    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
-        if (profissao) {
-            res.json(profissao.getMateriais());
+router.route('/profissao/:profissoes_id').get(function (req, res) {
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissoes) {
+        if (profissoes) {
+            res.json(profissoes.getMateriais());
         } else {
             res.json({ erro: 'profissao não encontrado' });
         }
     });
 }).put(function (req, res) {
-    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
-        if (profissao) {
-            profissao.update({
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissoes) {
+        if (profissoes) {
+            profissoes.update({
                 nome: req.body.nome,
-                descrição: req.body.descrição,
+                descricao: req.body.descricao,
                 competencias: req.body.competencias
             });
             res.json({ message: 'dados atualizados com sucesso' });
@@ -145,10 +146,11 @@ router.route('/profissoes/:profissoes_id').get(function (req, res) {
         }
     });
 }).delete(function (req, res) {
-    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissao) {
-        if (profissao) {
-            profissao.destroy();
-            res.json({ mensagem: 'profissão deletada com sucesso' });
+    _models.Profissoes.findById(req.params.profissoes_id).then(function (profissoes) {
+        if (profissoes) {
+            profissoes.destroy().then(function (profissoes) {
+                res.json({ mensagem: 'Profissão deletada!' });
+            });
         } else {
             res.json({ erro: 'profissão não encontrada' });
         }
