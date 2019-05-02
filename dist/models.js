@@ -44,8 +44,8 @@ var ProfissoesInteresse = exports.ProfissoesInteresse = sequelize.define('profis
 
 var Profissoes = exports.Profissoes = sequelize.define('profissoes', {
     nome: _sequelize2.default.STRING,
-    descrição: _sequelize2.default.TEXT,
-    competencias: _sequelize2.default.TEXT
+    descricao: _sequelize2.default.STRING,
+    competencias: _sequelize2.default.STRING
 });
 
 var Usuario = exports.Usuario = sequelize.define('usuario', {
@@ -72,7 +72,7 @@ var PerfisProfissionais = exports.PerfisProfissionais = sequelize.define('perfis
 
 var Materiais = exports.Materiais = sequelize.define('materiais', {
     titulo: _sequelize2.default.STRING,
-    descrição: _sequelize2.default.TEXT,
+    descrição: _sequelize2.default.STRING,
     link: _sequelize2.default.STRING
 });
 

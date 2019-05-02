@@ -38,7 +38,8 @@ router.route('/alunos')
                 alunosId: aluno.id,
                 realista:realista, 
                 intelectual:intelectual, 
-                social:social,empreendedor:empreendedor, 
+                social:social,
+                empreendedor:empreendedor, 
                 convencional:convencional,
                 artistico: artistico
             }
@@ -122,37 +123,37 @@ router.route('/aluno/:aluno_id')
 
 router.route('/profissao')
     .get((req,res)=>{
-        Profissoes.findAll().then(function(profissao){
-            res.json(profissao)
+        Profissoes.findAll().then(function(profissoes){
+            res.json(profissoes)
         })
     })
     .post((req,res)=>{
         const nome = req.body.nome;
-        const descrição = req.body.descrição;
+        const descricao = req.body.descricao;
         const competencias = req.body.competencias;
-        const data = {nome: nome, descrição: descrição, competencias: competencias};
+        const data = {nome: nome, descricao: descricao, competencias: competencias};
 
-        Profissoes.create(data).then((profissao)=>{
+        Profissoes.create(data).then((profissoes)=>{
             res.json({message: 'Profissão adicionada'})
         })
     });
 
-router.route('/profissoes/:profissoes_id')
+router.route('/profissao/:profissoes_id')
     .get((req,res)=>{
-        Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
-            if(profissao){
-                res.json(profissao.getMateriais());
+        Profissoes.findById(req.params.profissoes_id).then((profissoes)=>{
+            if(profissoes){
+                res.json(profissoes.getMateriais());
             }else{
                 res.json({erro: 'profissao não encontrado'})
             }
         })
     })
     .put((req,res)=>{
-        Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
-            if(profissao){
-                profissao.update({
+        Profissoes.findById(req.params.profissoes_id).then((profissoes)=>{
+            if(profissoes){
+                profissoes.update({
                     nome: req.body.nome,
-                    descrição: req.body.descrição,
+                    descricao: req.body.descricao,
                     competencias: req.body.competencias
                 })
                 res.json({message:'dados atualizados com sucesso'});
@@ -162,17 +163,17 @@ router.route('/profissoes/:profissoes_id')
         })
     })
     .delete((req,res)=>{
-        Profissoes.findById(req.params.profissoes_id).then((profissao)=>{
-            if(profissao){
-                profissao.destroy();
-                res.json({mensagem:'profissão deletada com sucesso'})
+        Profissoes.findById(req.params.profissoes_id)
+        .then(profissoes =>{
+            if(profissoes){
+                profissoes.destroy().then((profissoes) => {
+                    res.json({mensagem:'Profissão deletada!'});
+                })                
             }else{
                 res.json({erro: 'profissão não encontrada'})
             }
         })
-    });
-
-    
+    })    
     
 router.route('/profissoes/:profissoes_id/trilha')
     .get((req, res)=>{

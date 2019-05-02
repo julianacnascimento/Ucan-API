@@ -33,8 +33,8 @@ export let ProfissoesInteresse = sequelize.define('profissoesInteresse',{
 
 export let Profissoes = sequelize.define('profissoes',{
     nome: Sequelize.STRING,
-    descrição: Sequelize.TEXT,
-    competencias: Sequelize.TEXT
+    descricao: Sequelize.STRING,
+    competencias: Sequelize.STRING
 });
 
 export let Usuario  = sequelize.define('usuario', {
@@ -62,7 +62,7 @@ export let PerfisProfissionais = sequelize.define('perfisProfissionais',{
 
 export let Materiais = sequelize.define('materiais',{
     titulo: Sequelize.STRING,
-    descrição: Sequelize.TEXT,
+    descrição: Sequelize.STRING,
     link: Sequelize.STRING
 });
 
